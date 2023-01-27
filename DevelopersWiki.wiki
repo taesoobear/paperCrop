@@ -1,0 +1,13 @@
+The author of papercrop encourages share of user-written codes or scripts.
+If you have a patch to the codebase, please send it to me through the issue tracker above or by e-mail. 
+If you want to be a contributor, please let me know so that I can add you to the svn users or wiki managers or whatever.
+
+= Future work (may take forever) =
+
+Transition to CMake build system, and support other platforms.
+
+Improve UI for manual segmentation.
+
+luabind-0.9
+
+epub/html support 

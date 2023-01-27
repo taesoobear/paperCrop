@@ -1,0 +1,71 @@
+K 25
+svn:wc:ra_dav:version-url
+V 29
+/svn/!svn/ver/95/trunk/script
+END
+(portrait) vertical reflow.lua
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/svn/!svn/ver/95/trunk/script/(portrait)%20vertical%20reflow.lua
+END
+(portrait) fit images to screen.lua
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/svn/!svn/ver/95/trunk/script/(portrait)%20fit%20images%20to%20screen.lua
+END
+(portrait) fit images to screen width.lua
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/svn/!svn/ver/95/trunk/script/(portrait)%20fit%20images%20to%20screen%20width.lua
+END
+(landscape) vertical scroll (outputs a single image per page).lua
+K 25
+svn:wc:ra_dav:version-url
+V 111
+/svn/!svn/ver/95/trunk/script/(landscape)%20vertical%20scroll%20(outputs%20a%20single%20image%20per%20page).lua
+END
+(landscape) vertical reflow.lua
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/svn/!svn/ver/95/trunk/script/(landscape)%20vertical%20reflow.lua
+END
+(portrait) vertical scroll (outputs multiple images).lua
+K 25
+svn:wc:ra_dav:version-url
+V 96
+/svn/!svn/ver/95/trunk/script/(portrait)%20vertical%20scroll%20(outputs%20multiple%20images).lua
+END
+(landscape) fit images to screen.lua
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/svn/!svn/ver/95/trunk/script/(landscape)%20fit%20images%20to%20screen.lua
+END
+(portrait) vertical scroll (outputs a single image).lua
+K 25
+svn:wc:ra_dav:version-url
+V 97
+/svn/!svn/ver/95/trunk/script/(portrait)%20vertical%20scroll%20(outputs%20a%20single%20image).lua
+END
+(landscape) vertical scroll (outputs multiple images).lua
+K 25
+svn:wc:ra_dav:version-url
+V 97
+/svn/!svn/ver/95/trunk/script/(landscape)%20vertical%20scroll%20(outputs%20multiple%20images).lua
+END
+(portrait) vertical scroll (outputs a single image per page).lua
+K 25
+svn:wc:ra_dav:version-url
+V 110
+/svn/!svn/ver/95/trunk/script/(portrait)%20vertical%20scroll%20(outputs%20a%20single%20image%20per%20page).lua
+END
+(portrait) vertical scroll (outputs a single image if not too big).lua
+K 25
+svn:wc:ra_dav:version-url
+V 120
+/svn/!svn/ver/95/trunk/script/(portrait)%20vertical%20scroll%20(outputs%20a%20single%20image%20if%20not%20too%20big).lua
+END

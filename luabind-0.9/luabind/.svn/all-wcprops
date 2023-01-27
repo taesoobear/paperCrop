@@ -1,0 +1,233 @@
+K 25
+svn:wc:ra_dav:version-url
+V 42
+/svn/!svn/ver/40/trunk/luabind-0.9/luabind
+END
+container_policy.hpp
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/svn/!svn/ver/40/trunk/luabind-0.9/luabind/container_policy.hpp
+END
+get_main_thread.hpp
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/svn/!svn/ver/40/trunk/luabind-0.9/luabind/get_main_thread.hpp
+END
+wrapper_base.hpp
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/svn/!svn/ver/40/trunk/luabind-0.9/luabind/wrapper_base.hpp
+END
+return_reference_to_policy.hpp
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/svn/!svn/ver/40/trunk/luabind-0.9/luabind/return_reference_to_policy.hpp
+END
+back_reference.hpp
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/svn/!svn/ver/40/trunk/luabind-0.9/luabind/back_reference.hpp
+END
+get_pointer.hpp
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/svn/!svn/ver/40/trunk/luabind-0.9/luabind/get_pointer.hpp
+END
+class_info.hpp
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/svn/!svn/ver/40/trunk/luabind-0.9/luabind/class_info.hpp
+END
+out_value_policy.hpp
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/svn/!svn/ver/40/trunk/luabind-0.9/luabind/out_value_policy.hpp
+END
+nil.hpp
+K 25
+svn:wc:ra_dav:version-url
+V 50
+/svn/!svn/ver/40/trunk/luabind-0.9/luabind/nil.hpp
+END
+yield_policy.hpp
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/svn/!svn/ver/40/trunk/luabind-0.9/luabind/yield_policy.hpp
+END
+version.hpp
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/svn/!svn/ver/40/trunk/luabind-0.9/luabind/version.hpp
+END
+adopt_policy.hpp
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/svn/!svn/ver/40/trunk/luabind-0.9/luabind/adopt_policy.hpp
+END
+operator.hpp
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/svn/!svn/ver/40/trunk/luabind-0.9/luabind/operator.hpp
+END
+handle.hpp
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/svn/!svn/ver/40/trunk/luabind-0.9/luabind/handle.hpp
+END
+exception_handler.hpp
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/svn/!svn/ver/40/trunk/luabind-0.9/luabind/exception_handler.hpp
+END
+typeid.hpp
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/svn/!svn/ver/40/trunk/luabind-0.9/luabind/typeid.hpp
+END
+open.hpp
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/svn/!svn/ver/40/trunk/luabind-0.9/luabind/open.hpp
+END
+class.hpp
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/svn/!svn/ver/40/trunk/luabind-0.9/luabind/class.hpp
+END
+config.hpp
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/svn/!svn/ver/40/trunk/luabind-0.9/luabind/config.hpp
+END
+object.hpp
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/svn/!svn/ver/40/trunk/luabind-0.9/luabind/object.hpp
+END
+iterator_policy.hpp
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/svn/!svn/ver/40/trunk/luabind-0.9/luabind/iterator_policy.hpp
+END
+raw_policy.hpp
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/svn/!svn/ver/40/trunk/luabind-0.9/luabind/raw_policy.hpp
+END
+scope.hpp
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/svn/!svn/ver/40/trunk/luabind-0.9/luabind/scope.hpp
+END
+value_wrapper.hpp
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/svn/!svn/ver/40/trunk/luabind-0.9/luabind/value_wrapper.hpp
+END
+back_reference_fwd.hpp
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/svn/!svn/ver/40/trunk/luabind-0.9/luabind/back_reference_fwd.hpp
+END
+luabind.hpp
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/svn/!svn/ver/40/trunk/luabind-0.9/luabind/luabind.hpp
+END
+tag_function.hpp
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/svn/!svn/ver/40/trunk/luabind-0.9/luabind/tag_function.hpp
+END
+shared_ptr_converter.hpp
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/svn/!svn/ver/40/trunk/luabind-0.9/luabind/shared_ptr_converter.hpp
+END
+make_function.hpp
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/svn/!svn/ver/40/trunk/luabind-0.9/luabind/make_function.hpp
+END
+weak_ref.hpp
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/svn/!svn/ver/40/trunk/luabind-0.9/luabind/weak_ref.hpp
+END
+lua_include.hpp
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/svn/!svn/ver/40/trunk/luabind-0.9/luabind/lua_include.hpp
+END
+function.hpp
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/svn/!svn/ver/40/trunk/luabind-0.9/luabind/function.hpp
+END
+discard_result_policy.hpp
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/svn/!svn/ver/40/trunk/luabind-0.9/luabind/discard_result_policy.hpp
+END
+from_stack.hpp
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/svn/!svn/ver/40/trunk/luabind-0.9/luabind/from_stack.hpp
+END
+error.hpp
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/svn/!svn/ver/40/trunk/luabind-0.9/luabind/error.hpp
+END
+copy_policy.hpp
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/svn/!svn/ver/40/trunk/luabind-0.9/luabind/copy_policy.hpp
+END
+prefix.hpp
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/svn/!svn/ver/40/trunk/luabind-0.9/luabind/prefix.hpp
+END
+dependency_policy.hpp
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/svn/!svn/ver/40/trunk/luabind-0.9/luabind/dependency_policy.hpp
+END

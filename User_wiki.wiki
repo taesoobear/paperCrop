@@ -1,0 +1,118 @@
+== How to install ==
+
+= Windows =
+* How to install.
+
+Just unpack the zip file to any folder (preferably a folder with full permission such as My Documents/papercrop). 
+
+= Linux (Ubuntu or some debian distributions) =
+* How to install.
+
+Copy the downloaded ubuntu_installer.sh to an empty folder (in my case, ~/bin/papercrop) and execute in the terminal.
+{{{
+cd ~/bin/papercrop
+sh ./ubuntu_installer.sh
+}}}
+
+This script installs paperCrop in the ~/bin folder. 
+
+* How to install (other linux distros such as fedora)
+
+First install subversion, and then checkout the papercrop repository anywhere:
+{{{
+   svn checkout http://papercrop.googlecode.com/svn/trunk papercrop
+}}}
+Install dependencies, for example:
+{{{
+   cd papercrop
+   make install_dependencies_fedora
+}}}
+You can refer to the Makefile to see what dependencies are required.
+{{{
+   cat Makefile | grep install
+}}}
+The package names might differ depending on the distro.
+After installing dependencies, make and then make install:
+{{{
+   make
+   make install
+}}}
+This installs paperCrop in the ~/bin folder. 
+
+* How to execute.
+
+1. Easy way:
+
+Assuming ~/bin is in the path, simply type in a terminal
+{{{
+paperCrop aaa.pdf
+}}}
+Or, you can use
+{{{
+~/bin/paperCrop aaa.pdf
+}}}
+Here, paperCrop is a python script located in your ~/bin.
+
+2. Using a file manager:
+
+Run "papercrop" in the "~/bin/papercrop/paperCrop_source".
+
+3. Alternative way in a terminal:
+{{{
+~/bin/paperCrop
+}}}
+
+* How to update to the latest version.
+
+Just re-run the script
+{{{
+cd ~/bin/papercrop
+sh ./ubuntu_installer.sh
+}}}
+Update is usually much faster than first-install.
+
+Or if you didn't use the script
+{{{
+cd papercrop
+svn update .
+make
+make install
+}}}
+
+* The following error message appeared while updating:
+{{{
+Conflict discovered in 'paperCrop_source/config.lua'.
+Select: (p) postpone, (df) diff-full, (e) edit,
+        (mc) mine-conflict, (tc) theirs-conflict,
+        (s) show all options: 
+}}}
+Type in
+{{{
+tf
+}}}
+This option (theirs-full) will discard your local modifications on config.lua, and get the latest version.
+
+* How can I know what version is installed?
+{{{
+cd ~/bin/papercrop
+cd paperCrop_source
+svn info
+}}}
+will show the revision number. 
+
+* Update doesn't seem to work. What should I do?
+
+Reverting your modification of config.lua might be needed.
+{{{
+cd paperCrop_source
+svn revert config.lua
+}}}
+
+Rebuilding the entire source code might be helpful.
+{{{
+cd paperCrop_source
+sh clean_build.sh
+}}}
+
+== How to uninstall ==
+Just delete the install folder.

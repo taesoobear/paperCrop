@@ -1,0 +1,9 @@
+MIN_gap=6
+margin=1.45
+N_columns=1
+white_point=255
+option=(device.default_orientation or '(landscape)').." vertical scroll "..device.default_split
+crop_T = 0
+crop_B = 0
+crop_L = 0
+crop_R = 0
