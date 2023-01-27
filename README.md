@@ -6,21 +6,22 @@ Linux (Ubuntu or some debian distributions)
 =
 
 * How to install.
-{{{
+
+```
 make install_dependencies_ubuntu
 make
 make install
-}}}
+```
 
 This script installs paperCrop in the ~/bin folder. 
 
 Mac 
 =
-{{{
+```
 make install_dependencies_mac
 make
 make install
-}}}
+```
 
 This script installs paperCrop in the ~/bin folder. 
 
@@ -30,23 +31,23 @@ This script installs paperCrop in the ~/bin folder.
 1. Easy way:
 
 Assuming ~/bin is in the path, simply type in a terminal
-{{{
+```
 paperCrop aaa.pdf
-}}}
+```
 Or, you can use
-{{{
+```
 ~/bin/paperCrop aaa.pdf
-}}}
+```
 Here, paperCrop is a python script located in your ~/bin.
 
 2. Using a file manager:
 
 Run "papercrop" in the "~/bin/papercrop/paperCrop_bin".
 
-3. Alternative way in a terminal:
-{{{
+3. Alternatively, in a terminal:
+```
 ~/bin/paperCrop
-}}}
+```
 
 
 How to uninstall
