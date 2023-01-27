@@ -2,7 +2,6 @@ all: release
 
 # to compile and install paperCrop to ~/bin/
 # make install_dependencies_ubuntu11.10; make; make console; make install
-SOURCE_DIR :=~/bin/papercrop/paperCrop_source
 .PHONY: release debug clean console
 release:
 	mkdir -p build_linux;cd build_linux;cmake ..;make;cp paperCrop ..
@@ -45,12 +44,11 @@ install_dependencies_fedora:
 	sudo yum install libjpeg-turbo-devel
 
 install: 
-	if test -d $(SOURCE_DIR); then echo "Test passed"; else mkdir -p ~/bin/papercrop; fi
-	cp -rf . $(SOURCE_DIR)
-	cp paperCrop ~/bin/papercrop/paperCrop
-	cp paperCrop $(SOURCE_DIR)
+	if test -d ~/bin/papercrop_bin; then echo "Test passed2"; else mkdir -p ~/bin/papercrop_bin; fi
+	cp -rf . ~/bin/papercrop_bin/
+	cp paperCrop ~/bin/papercrop_bin/paperCrop
 	cp paperCrop.py ~/bin/paperCrop
 	cp paperCrop_auto.py ~/bin/paperCropAuto
 	chmod 700 ~/bin/paperCrop
 	chmod 700 ~/bin/paperCropAuto
-	if test -f paperCrop_console; then cp paperCrop_console ~/bin/papercrop/paperCrop_console; fi
+	if test -f paperCrop_console; then cp paperCrop_console ~/bin/papercrop_bin/paperCrop_console; fi

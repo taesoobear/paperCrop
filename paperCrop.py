@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
  
 #  Add quote in lyx using lyxclient
@@ -6,7 +6,7 @@
 import os,sys
 
 HOME = os.environ.get("HOME")
-PAPERCROP_PATH= os.path.join(HOME, "bin/papercrop/paperCrop_source")
+PAPERCROP_PATH= os.path.join(HOME, "bin/papercrop/paperCrop_bin")
 CWD=os.getcwd()
 
 if not os.path.exists(PAPERCROP_PATH):
