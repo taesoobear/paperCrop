@@ -130,7 +130,7 @@ if(UNIX)
 			${poppler_INCLUDE_DIRS}
 			/usr/include/poppler
 			/usr/local/include/poppler
-			/usr/homebrew/include/poppler
+			/opt/homebrew/include/poppler
 			${DevIL_INCLUDE_DIRS}
 			./include 
 			.
