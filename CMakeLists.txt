@@ -62,6 +62,7 @@ if(UNIX)
   if(NOT poppler_LIBRARIES) # if empty
 	  if (APPLE)
 		  link_directories(/usr/local/lib)
+		  link_directories(/opt/homebrew/lib)
 	  endif()
 	  set(poppler_LIBRARIES poppler) # set default
   endif()
