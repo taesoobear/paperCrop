@@ -200,7 +200,7 @@ function ctor()
 	panel:widget(0):deactivate();
 	panel:widget(0):buttonShortcut("FL_ALT+p");
 
-	panel:create("Button", "Batch process", "Batch process",0);
+	--panel:create("Button", "Batch process", "Batch process",0);
 
 	panel:create("Box", "Status");
 	panel:updateLayout();

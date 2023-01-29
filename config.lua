@@ -7,7 +7,11 @@
 -- kindle send-to-kindle has so many bugs!!! I did some work to work around that.
 kindle2 = {560,735, pad_right=3, pad_bottom=4, mark_corners=true, color_depth=8}  -- color_depth==4 seems to have bugs when resolutions are odd numbers.
 kindle3 = kindle2   -- not sure. previous default was {552,736} 
-kindle_scribe = {560*3,735*3,  mark_corners=true, color_depth=8
+kindle_scribe = {
+	--560*3,735*3,  
+	1836, 2448, -- 300ppi
+	--1713, 2249,  -- artifacts
+	mark_corners=true, color_depth=8
 	, default_orientation="(portrait)"
 	, default_preset="presets/two-column papers (portrait).lua" 
 }  -- color_depth==4 seems to have bugs when resolutions are odd numbers.
