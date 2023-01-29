@@ -4,8 +4,13 @@
 -- please send me e-mail if you know your device's correct configuration.
 ---------------------------------------------------------------------
 
+-- kindle send-to-kindle has so many bugs!!! I did some work to work around that.
 kindle2 = {560,735, pad_right=3, pad_bottom=4, mark_corners=true, color_depth=8}  -- color_depth==4 seems to have bugs when resolutions are odd numbers.
 kindle3 = kindle2   -- not sure. previous default was {552,736} 
+kindle_scribe = {560*3,735*3,  mark_corners=true, color_depth=8
+	, default_orientation="(portrait)"
+	, default_preset="presets/two-column papers (portrait).lua" 
+}  -- color_depth==4 seems to have bugs when resolutions are odd numbers.
 cybook = {600, 800} -- when title bar is hidden
 kobo_wireless_old_firmware = {582,740} -- Up to firmware version 1.7.4. Huge waste of screen real estate. 
 kobo_wireless= {600,800, output_format=".cbz"} -- Kobo wireless firmware 1.9 started to support CBZ. This format has faster page turning speed and fullscreen!
@@ -34,12 +39,13 @@ device={600,800} -- {device_width, device_height}
 --uncomment if your device is listed below
 --device=kindle2
 --device=kindle3
+device=kindle_scribe
 --device=kobo_wireless_old_firmware
 --device=kobo_wireless
 --device=cybook
 --device=android
 --device=sony_PRS_T1
-device=sharp_memo_pad
+--device=sharp_memo_pad
 -- all of the above devices rasterizes PDF to images
 --device=vector_PDF
 

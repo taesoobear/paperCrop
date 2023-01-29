@@ -6,7 +6,7 @@
 import os,sys
 
 HOME = os.environ.get("HOME")
-PAPERCROP_PATH= os.path.join(HOME, "bin/papercrop/paperCrop_bin")
+PAPERCROP_PATH= os.path.join(HOME, "bin/papercrop_bin")
 CWD=os.getcwd()
 
 if not os.path.exists(PAPERCROP_PATH):

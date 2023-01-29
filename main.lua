@@ -1,6 +1,6 @@
 require('mylib')
 require('config')
-debug_mode=true
+debug_mode=false
 
 function processOption(option)
 	option=string.gsub(option,"%) ", ")\n");
@@ -29,7 +29,6 @@ function loadPreset(fn)
 	panel:findWidget("Option_Input"):inputValue(processOption(option));
 
 	local options=panel:findWidget("options")
-	dbg.console()
 	local argMenu=table.find(goptions, option)-1
 	--print("argMenu", argMenu)
 	options:menuValue(argMenu)
