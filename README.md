@@ -5,7 +5,7 @@ Multi-column PDF files on 6 to 10 inch displays.
 About
 =
 This program converts PDF documents such as articles, and academic papers into a PDF (or image sequence) so that it can be read on a small screen of e-book devices or smartphones.
-
+(I developed this program partly because my kindle oasis and scribe have so many bugs in their PDF implementation. This tool can optimize any PDFs to work on kindles robustly.)
 
 Usage
 =
@@ -64,8 +64,8 @@ How can I improve readability?
 
 Output is gray. Why not color?
   Color pdf is usually larger. If you need colors, then edit config.lua and edit color_depth=8 -> color_depth=24. (From version 0.43)
-This program is for converting technical documents k
-(revived an old repository because my kindle scribe doesn't accept many pdf files. This tool can convert any pdf to work on kindle scribe.)
+This program is for converting technical documents.
+
 
 
 Linux (Ubuntu or some debian distributions) 
