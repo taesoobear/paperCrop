@@ -109,12 +109,21 @@ function ctor()
 	panel:widget(0):buttonShortcut("FL_ALT+l");
 	panel:widget(0):buttonTooltip("Alt+L");
 
-	if os.isUnix() then
+	if false and os.isUnix() then
 		panel:create("Button", "Load a PDF file (native)", "Load a PDF file (native)");
 
 		panel:widget(0):buttonShortcut("FL_ALT+n");
 		panel:widget(0):buttonTooltip("Alt+N");
 	end
+	panel:create("Button", "Process all pages", "Process all pages",0);
+
+	panel:widget(0):deactivate();
+	panel:widget(0):buttonShortcut("FL_ALT+p");
+
+	panel:create("Box", "msg a", "")
+	panel:create("Box", "msg 1", "Advanced options below:")
+
+
 	panel:create("Choice", "presets")
 	--panel:create("Button", "Preset", "default preset");
 	setPresetMenu();
@@ -195,10 +204,6 @@ function ctor()
 		panel:widget(0):deactivate();
 	end
 
-	panel:create("Button", "Process all pages", "Process all pages",0);
-
-	panel:widget(0):deactivate();
-	panel:widget(0):buttonShortcut("FL_ALT+p");
 
 	--panel:create("Button", "Batch process", "Batch process",0);
 
