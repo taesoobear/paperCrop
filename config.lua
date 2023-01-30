@@ -69,7 +69,7 @@ function setDefault()
 	force_resolution=true
 	use_4xsupersampling=false -- better quality output for scanned documents, but slower.
 	nr_of_pages_per_pdf_book = 100;
-	max_vspace=16 -- pixels
+	max_vspace=math.max(device[2]/600,1)*16 -- pixels
 
 	if os.isUnix() then
 		move_to_folder=device.move_to_folder_linux
@@ -92,7 +92,9 @@ end
 
 setDefault()
 
-devices={['kindle 2']=kindle2, ['kindle 3']=kindle3, ['cybook (no title bar)']=cybook, ['kobo wireless']=kobo_wireless,
+devices={['kindle 2']=kindle2, ['kindle 3']=kindle3, 
+['kindle scribe']=kindle_scribe,
+['cybook (no title bar)']=cybook, ['kobo wireless']=kobo_wireless,
 ['android (width 600)']=android, ['sony PRS-t1']=sony_PRS_T1, ['vector PDF']=vector_PDF}
 
 
