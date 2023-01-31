@@ -205,7 +205,7 @@ function ctor()
 	end
 
 
-	--panel:create("Button", "Batch process", "Batch process",0);
+	panel:create("Button", "Batch process", "Batch process",0);
 
 	panel:create("Box", "Status");
 	panel:updateLayout();

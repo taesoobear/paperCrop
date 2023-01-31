@@ -4,13 +4,13 @@ all: release
 # make install_dependencies_ubuntu11.10; make; make console; make install
 .PHONY: release debug clean console
 release:
-	mkdir -p build_linux;cd build_linux;cmake ..;make;cp paperCrop ..
+	mkdir -p build_linux;cd build_linux;cmake ..;make
 
 debug:
-	mkdir -p build_linux_debug;cd build_linux_debug;cmake -D "CMAKE_BUILD_TYPE=Debug" ..; make; cp paperCrop ..
+	mkdir -p build_linux_debug;cd build_linux_debug;cmake -D "CMAKE_BUILD_TYPE=Debug" ..; make
 
 console: 
-	mkdir -p build_linux_console;cd build_linux_console;cmake -D "CONSOLE=True" ..;make;cp paperCrop ../paperCrop_console
+	mkdir -p build_linux_console;cd build_linux_console;cmake -D "CONSOLE=True" ..;make
 
 clean:
 	rm -rf build_linux
@@ -23,6 +23,9 @@ lldb:
 cgdb:
 	make debug
 	cgdb ./build_linux_debug/paperCrop
+run:
+	make
+	build_linux/paperCrop
 
 install_dependencies_mac:
 	brew install devil fltk eigen lua@5.1 poppler
@@ -47,7 +50,6 @@ install_dependencies_fedora:
 install: 
 	if test -d ~/bin/papercrop_bin; then echo "Test passed2"; else mkdir -p ~/bin/papercrop_bin; fi
 	cp -rf . ~/bin/papercrop_bin/
-	cp paperCrop ~/bin/papercrop_bin/paperCrop
 	cp paperCrop.py ~/bin/paperCrop
 	cp paperCrop_auto.py ~/bin/paperCropAuto
 	chmod 700 ~/bin/paperCrop

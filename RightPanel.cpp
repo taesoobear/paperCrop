@@ -234,6 +234,7 @@ RightPanel::~RightPanel(void)
 
 #ifndef NO_SHOW_WIN
 //#include <FL/Fl_Native_File_Chooser.H>
+#include <FL/Fl_File_Chooser.H>
 #endif
 void RightPanel::onCallback(FlLayout::Widget const& w, Fl_Widget * pWidget, int userData)
 {
@@ -322,28 +323,42 @@ void RightPanel::onCallback(FlLayout::Widget const& w, Fl_Widget * pWidget, int 
 	}
 	else if(w.mId=="Batch process")
 	{
-		/*
 #ifndef NO_SHOW_WIN
+		TStrings fn;
+#if 0
 		Fl_Native_File_Chooser *chooser = new Fl_Native_File_Chooser();
 		chooser->type(Fl_Native_File_Chooser::BROWSE_MULTI_FILE);   // let user browse a single file
 		chooser->title("Open files");                        // optional title
 		//chooser->preset_file("/var/tmp/somefile.txt");        // optional filename preset
 		chooser->filter("PDF Files\t*.pdf");                 // optional filter
-		TStrings fn;
 		switch ( chooser->show() ) {
 			case -1:    // ERROR
 			fprintf(stderr, "*** ERROR show() failed:%s\n", chooser->errmsg());
-			break;
+			return;
 			case 1:     // CANCEL
 			fprintf(stderr, "*** CANCEL\n");
-			break;
-			default:    // USER PICKED A FILE
-				{
-					fn.resize(chooser->count());
-					for (int n = 0; n < chooser->count(); n++ ) 
-      				fn[n]=chooser->filename(n);
-				}
-			break;
+			return;
+		}
+		fn.resize(chooser->count());
+		for (int n = 0; n < chooser->count(); n++ ) 
+				fn[n]=chooser->filename(n);
+#else
+		Fl_File_Chooser *chooser = new  Fl_File_Chooser(
+				".",
+				"PDF Files (*.pdf)",
+				Fl_File_Chooser ::MULTI ,
+				"Open files");
+		chooser->show();
+
+		while(chooser->shown()) {
+			Fl::wait();
+		}
+
+#endif
+		{
+			fn.resize(chooser->count());
+			for (int n = 1; n <= chooser->count(); n++ ) 
+				fn[n-1].format("%s", chooser->value(n));
 		}
 		//TString fn=fl_file_chooser("Choose a PDF file", "*.pdf", NULL);
 		if(fn.size())
@@ -356,6 +371,5 @@ void RightPanel::onCallback(FlLayout::Widget const& w, Fl_Widget * pWidget, int 
 			}
 		}
 #endif
-*/
 	}
 }
