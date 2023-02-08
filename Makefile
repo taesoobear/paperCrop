@@ -25,7 +25,7 @@ cgdb:
 	cgdb ./build_linux_debug/paperCrop
 run:
 	make
-	build_linux/paperCrop
+	./paperCrop
 
 install_dependencies_mac:
 	brew install devil fltk eigen lua@5.1 poppler

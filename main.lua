@@ -398,8 +398,13 @@ function sortRect(mat)
 				return false
 			end
 		else
+			if a.bottom <b.top then
+				return true
+			elseif b.bottom<a.top then
+				return false
+
 			-- two column rectangles
-			if a.right <b.left+0.1 then
+			elseif a.right <b.left+0.1 then
 				return true
 			elseif  b.right<a.left+0.1 then
 				return false
@@ -410,6 +415,42 @@ function sortRect(mat)
 	end
 
 	table.sort(tbl, compRect)
+
+	local function isSimilar(a,b)
+		return math.abs(a-b)<0.05
+	end
+
+	local ni=#tbl
+	local i=1
+	while i<ni-1 do
+		local a=tbl[i]
+		local b=tbl[i+1]
+		if isSimilar(a.top, b.top) and isSimilar(a.bottom, b.bottom) then
+
+			local merge=false
+			if b.left>a.left and b.right>a.right then
+				if b.right-a.left <maxWidth*0.5 then
+					merge=true
+				elseif a.bottom-a.top<0.2 then
+					merge=true
+				end
+				print(i, a.bottom, a.top, merge)
+			end
+			if merge then
+				-- merge 
+				a.top=math.max(a.top, b.top)
+				a.bottom=math.min(a.bottom, b.bottom)
+				a.right=b.right
+
+
+				table.remove(tbl, i+1)
+				ni=#tbl
+				i=i-1
+			end
+		end
+		i=i+1
+	end
+
 	mat:resize(#tbl,4)
 	for i,v in ipairs(tbl) do
 		mat:set(i-1, 0, math.floor(v.left *res[1]+0.5))

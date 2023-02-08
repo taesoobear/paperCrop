@@ -291,6 +291,7 @@ set(src
   "./utility/TextFile.h"
   )
 
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${paperCrop_SOURCE_DIR})
 
 if(CONSOLE)
 	add_executable(paperCrop
