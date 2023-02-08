@@ -373,51 +373,72 @@ function onCallback(w, userData)
 	end
 	return false
 end
+
+function compRectFull(a,b)
+	if a.top< b.top and a.bottom <b.bottom then
+		return true
+	elseif a.top>b.top and a.bottom>b.bottom then
+		return false
+	elseif a.bottom < b.top+0.1 then
+		return true
+	elseif b.bottom < a.top +0.1 then
+		return false
+	else
+		return a.top<b.top
+	end
+end
+function compRect(a,b)
+	if a.fullColumn then
+		if b.fullColumn then
+			return a.origIndex<b.origIndex
+		else
+			return compRectFull(a,b)
+		end
+	elseif b.fullColumn then
+		return not compRectFull(b,a)
+	else
+		-- two column rectangles
+		if a.right <b.left+0.1 then
+			return true
+		elseif  b.right<a.left+0.1 then
+			return false
+		end
+	end
+
+	return a.origIndex<b.origIndex
+end
 function sortRect(mat)
-	local tbl={}
 
 	if mat:rows()==0 then return end
 
 	local res={mat(0,4), mat(0,5)}
+	local tbl={}
 	for i=0, mat:rows()-1 do
-		tbl[i+1]={origIndex=i, left=mat(i,0)/res[1], top=mat(i,1)/res[2], right=mat(i,2)/res[1], bottom=mat(i,3)/res[2]}
+		table.insert(tbl,{origIndex=i, left=mat(i,0)/res[1], top=mat(i,1)/res[2], right=mat(i,2)/res[1], bottom=mat(i,3)/res[2]})
 	end
 
-	local minX=1
-	local maxX=0
-	for i,v in ipairs(tbl) do
-		minX=math.min(minX, v.left)
-		maxX=math.max(maxX, v.right)
-	end
-	local maxWidth=maxX-minX
-	local function compRect(a,b)
-		if b.right-b.left > maxWidth-0.1 and a.right-a.left>maxWidth-0.1 then
-			if a.bottom < b.top+0.1 then
-				return true
-			elseif b.bottom < a.top+0.1 then
-				return false
-			end
-		else
-			if a.bottom <b.top then
-				return true
-			elseif b.bottom<a.top then
-				return false
-
-			-- two column rectangles
-			elseif a.right <b.left+0.1 then
-				return true
-			elseif  b.right<a.left+0.1 then
-				return false
+	local maxWidth
+	do
+		local minX=1
+		local maxX=0
+		for i,v in ipairs(tbl) do
+			minX=math.min(minX, v.left)
+			maxX=math.max(maxX, v.right)
+		end
+		maxWidth=maxX-minX
+		for i, b in ipairs(tbl) do
+			if (b.right-b.left>maxWidth-0.1) 
+				or (b.left<0.3 and b.right>0.7) then
+				b.fullColumn=true
+				print(i, 'full')
 			end
 		end
-
-		return a.origIndex<b.origIndex
 	end
 
 	table.sort(tbl, compRect)
 
 	local function isSimilar(a,b)
-		return math.abs(a-b)<0.05
+		return math.abs(a-b)<0.02
 	end
 
 	local ni=#tbl
@@ -438,8 +459,8 @@ function sortRect(mat)
 			end
 			if merge then
 				-- merge 
-				a.top=math.max(a.top, b.top)
-				a.bottom=math.min(a.bottom, b.bottom)
+				a.top=math.min(a.top, b.top)
+				a.bottom=math.max(a.bottom, b.bottom)
 				a.right=b.right
 
 
