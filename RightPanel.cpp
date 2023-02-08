@@ -78,6 +78,9 @@ static LUAwrapper* L=NULL;
 #else
 static lua_State* L=NULL;
 #endif
+lua_State* getState() {
+	return L;
+}
 static void _initLuaEnvironment(RightPanel* win)
 {
 

@@ -47,7 +47,12 @@
 
 #include "ImageSegmentation.h"
 
+#include "WrapperLua/LUAwrapper.h"
+#include "WrapperLua/OR_LUA_Stack.h"
+#include "luna_baselib.h"
+#include "luna_mainlib.h"
 PDFmodel* gModel=NULL;
+lua_State* getState() ;
 enum {TC_c=0, TC_x, TC_y, TC_w, TC_h, TC_fx, TC_fy};
 // #define DEBUG_FONT_DETECTION
 #define USE_FONT_DETECTION
@@ -909,6 +914,47 @@ void PDFwin::pageChanged()
 		s.segment();
 		std::list<TRect> results;
 		s.getResult(results, max_width, margin_percentage);
+
+		{
+			// call sort rect in main.lua
+			int c=0;
+			std::list<TRect>::iterator i;
+			for(i=results.begin(); i!=results.end(); i++)
+				c++;
+			matrixn temp(c,6);
+
+			c=0;
+			for(i=results.begin(); i!=results.end(); i++)
+			{
+				temp(c,0)=(*i).left;
+				temp(c,1)=(*i).top;
+				temp(c,2)=(*i).right;
+				temp(c,3)=(*i).bottom;
+				temp(c,4)=bmp->GetWidth();
+				temp(c,5)=bmp->GetHeight();
+				c++;
+			}
+
+			auto* L=getState();
+			lunaStack l(L);
+			l.getglobal("sortRect");
+			l.push<matrixn>(&temp);
+			l.call(1,0);
+
+			printf("%s\n", temp.output().ptr());
+
+
+			results.clear();
+			for(c=0; c<temp.rows(); c++)
+			{
+				results.push_back(TRect(
+				temp(c,0),
+				temp(c,1),
+				temp(c,2),
+				temp(c,3)));
+			}
+		}
+
 
 		/*
 

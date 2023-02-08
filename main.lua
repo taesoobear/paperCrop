@@ -373,3 +373,48 @@ function onCallback(w, userData)
 	end
 	return false
 end
+function sortRect(mat)
+	local tbl={}
+
+	if mat:rows()==0 then return end
+
+	local res={mat(0,4), mat(0,5)}
+	for i=0, mat:rows()-1 do
+		tbl[i+1]={origIndex=i, left=mat(i,0)/res[1], top=mat(i,1)/res[2], right=mat(i,2)/res[1], bottom=mat(i,3)/res[2]}
+	end
+
+	local minX=1
+	local maxX=0
+	for i,v in ipairs(tbl) do
+		minX=math.min(minX, v.left)
+		maxX=math.max(maxX, v.right)
+	end
+	local maxWidth=maxX-minX
+	local function compRect(a,b)
+		if b.right-b.left > maxWidth-0.1 and a.right-a.left>maxWidth-0.1 then
+			if a.bottom < b.top+0.1 then
+				return true
+			elseif b.bottom < a.top+0.1 then
+				return false
+			end
+		else
+			-- two column rectangles
+			if a.right <b.left+0.1 then
+				return true
+			elseif  b.right<a.left+0.1 then
+				return false
+			end
+		end
+
+		return a.origIndex<b.origIndex
+	end
+
+	table.sort(tbl, compRect)
+	mat:resize(#tbl,4)
+	for i,v in ipairs(tbl) do
+		mat:set(i-1, 0, math.floor(v.left *res[1]+0.5))
+		mat:set(i-1, 1, math.floor(v.top *res[2]+0.5))
+		mat:set(i-1, 2, math.floor(v.right *res[1]+0.5))
+		mat:set(i-1, 3, math.floor(v.bottom *res[2]+0.5))
+	end
+end
