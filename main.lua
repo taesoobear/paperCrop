@@ -387,6 +387,14 @@ function compRectFull(a,b)
 		return a.top<b.top
 	end
 end
+function compRectSafe(a,b)
+	local b1=compRect(a,b)
+	local b2=compRect(b,a)
+	if b1 == b2 then
+		return a.origIndex<b.origIndex
+	end
+	return b1
+end
 function compRect(a,b)
 	if a.fullColumn then
 		if b.fullColumn then
@@ -435,7 +443,7 @@ function sortRect(mat)
 		end
 	end
 
-	table.sort(tbl, compRect)
+	table.sort(tbl, compRectSafe)
 
 	local function isSimilar(a,b)
 		return math.abs(a-b)<0.02
