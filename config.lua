@@ -11,9 +11,10 @@ kindle_scribe = {
 	--560*3,735*3,  
 	1836, 2448, -- 300ppi
 	--1713, 2249,  -- artifacts
-	mark_corners=true, color_depth=8
-	, default_orientation="(portrait)"
-	, default_preset="presets/two-column papers (portrait).lua" 
+	mark_corners=true, color_depth=8,
+	landscapeRotate='rotateLeft', 
+	default_orientation="(portrait)",
+	default_preset="presets/two-column papers (portrait).lua",
 }  -- color_depth==4 seems to have bugs when resolutions are odd numbers.
 cybook = {600, 800} -- when title bar is hidden
 kobo_wireless_old_firmware = {582,740} -- Up to firmware version 1.7.4. Huge waste of screen real estate. 
