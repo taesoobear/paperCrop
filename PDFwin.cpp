@@ -894,7 +894,8 @@ void PDFwin::pageChanged()
 
 
 		FlLayout* layout=mLayout->findLayout("Automatic segmentation");
-		double min_gap_percentage=layout->findSlider("MIN gap")->value();
+		double min_gap_percentage_x=layout->findSlider("MIN gap x")->value();
+		double min_gap_percentage_y=layout->findSlider("MIN gap y")->value();
 		double margin_percentage=layout->findSlider("Margin")->value();
 		int thr_white=layout->findSlider("white point")->value();
 		double max_width=1.0/layout->findSlider("N columns")->value();
@@ -910,7 +911,7 @@ void PDFwin::pageChanged()
 , (1-cropB)*bmp->GetHeight());
 
 	
-		ImageSegmentation s(t, true, domain, 0, min_gap_percentage, thr_white);
+		ImageSegmentation s(t, true, domain, 0, min_gap_percentage_x, min_gap_percentage_y, thr_white);
 		s.segment();
 		std::list<TRect> results;
 		s.getResult(results, max_width, margin_percentage);

@@ -18,7 +18,8 @@ function loadPreset(fn)
 	if not fno then print(msg) return end
 	fno()
 	local layout=panel:findLayout("Automatic segmentation");
-	layout:findWidget("MIN gap"):sliderValue(MIN_gap);
+	layout:findWidget("MIN gap x"):sliderValue(MIN_gap);
+	layout:findWidget("MIN gap y"):sliderValue(MIN_gap);
 	layout:findWidget("Margin"):sliderValue(margin);
 	layout:findWidget("N columns"):sliderValue(N_columns);
 	layout:findWidget("white point"):sliderValue(white_point);
@@ -152,7 +153,9 @@ function ctor()
 
 
 	panel:create("Layout", "Automatic segmentation", "segmentation parameters");
-	panel:layout(0):create("Value_Slider", "MIN gap","MIN gap", 1);
+	panel:layout(0):create("Value_Slider", "MIN gap x","MIN gap x", 1);
+	panel:layout(0):widget(0):sliderRange(0.0, 10.0);
+	panel:layout(0):create("Value_Slider", "MIN gap y","MIN gap y", 1);
 	panel:layout(0):widget(0):sliderRange(0.0, 10.0);
 	panel:layout(0):create("Value_Slider", "MIN text-gap","MIN text-gap");
 	panel:layout(0):widget(0):sliderRange(1.0, 10.0);

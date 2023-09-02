@@ -133,14 +133,14 @@ void SummedAreaTable::getHorizHistogram(TRect const& domain, intvectorn& histogr
 	}
 }
 
-// thr_whiteº¸´Ù ¹àÀ¸¸é ¿©¹éÀ¸·Î °£ÁÖ. ¿©¹éÀÇ µÎ²²°¡ ´ÜÃà ±âÁØÀ¸·Î min_gap_percentageº¸´Ù Á¼À¸¸é ¿©¹éÀ¸·Î Ã³¸® ¾ÈÇÔ. 
 ImageSegmentation::ImageSegmentation(SummedAreaTable const& s, bool bHorizSplit, TRect const& domain,
-									 ImageSegmentation* parent, double min_gap_percentage, int thr_white)
+									 ImageSegmentation* parent, double min_gap_percentageX, double min_gap_percentageY, int thr_white)
 									 :mTable(s),
 mDomain(domain)
 {
 	mParent=parent;
-	mMinGapPercentage=min_gap_percentage;
+	mMinGapPercentageX=min_gap_percentageX;
+	mMinGapPercentageY=min_gap_percentageY;
 	mThrWhite=thr_white;
 	mbHorizSplit=bHorizSplit;
 }
@@ -155,7 +155,14 @@ ImageSegmentation::~ImageSegmentation()
 
 void ImageSegmentation::segment()
 {
-	int min_gap=int((double)mTable.getImageWidth()*mMinGapPercentage*0.01 +0.5);
+	int min_gap_x=int((double)mTable.getImageWidth()*mMinGapPercentageX*0.01 +0.5);
+	int min_gap_y=int((double)mTable.getImageWidth()*mMinGapPercentageY*0.01 +0.5);
+
+	int min_gap;
+	if(mbHorizSplit)
+		min_gap=min_gap_y;
+	else
+		min_gap=min_gap_x;
 
 	intvectorn histogram;
 
@@ -219,7 +226,7 @@ void ImageSegmentation::segment()
 			domain.bottom=mDomain.bottom;
 		}
 
-		mChildren[i]=new ImageSegmentation(mTable, !mbHorizSplit, domain, this, mMinGapPercentage, mThrWhite);
+		mChildren[i]=new ImageSegmentation(mTable, !mbHorizSplit, domain, this, mMinGapPercentageX, mMinGapPercentageY, mThrWhite);
 		mChildren[i]->segment();
 	}
 }
@@ -318,17 +325,17 @@ TRect merge(TRect const & prevRect, TRect const & rect)
 	return mergeRect;
 }
 
-bool mergeable(std::vector<TRect> & results, int i, int j, int max_width, int min_gap)
+bool mergeable(std::vector<TRect> & results, int i, int j, int max_width, int min_gap_x, int min_gap_y)
 {
 	TRect& prevRect=results[i];
 	TRect& rect=results[j];
 
 	if(prevRect.Width() < max_width && rect.Width() < max_width 
-		&& rect.bottom >= prevRect.bottom-min_gap
-		&& rect.top >= prevRect.top-min_gap)
+		&& rect.bottom >= prevRect.bottom-min_gap_y
+		&& rect.top >= prevRect.top-min_gap_x)
 	{
-		if((rect.left -min_gap <= prevRect.left  && prevRect.right <=rect.right +min_gap) ||
-			(prevRect.left -min_gap  <=rect.left  && rect.right <=prevRect.right +min_gap) )
+		if((rect.left -min_gap_x <= prevRect.left  && prevRect.right <=rect.right +min_gap_x) ||
+			(prevRect.left -min_gap_x <=rect.left  && rect.right <=prevRect.right +min_gap_x) )
 		{
 			bool bFindInterupt=false;
 
@@ -339,7 +346,7 @@ bool mergeable(std::vector<TRect> & results, int i, int j, int max_width, int mi
 				TRect& t=results[k];
 
 				TRect mergeRect=merge(prevRect, rect);
-				mergeRect.enlarge(min_gap);
+				mergeRect.enlarge(min_gap_x);
 
 				if(intersect(mergeRect, t) && !contains(mergeRect, t))
 					bFindInterupt=true;
@@ -356,7 +363,8 @@ void ImageSegmentation::getResult(std::list<TRect>& results, double _max_width, 
 	results.clear();
 
 	int max_width=int((double)mTable.getImageWidth()*_max_width+0.5);
-	int min_gap=int((double)mTable.getImageWidth()*mMinGapPercentage*0.01 +0.5);
+	int min_gap_x=int((double)mTable.getImageWidth()*mMinGapPercentageX*0.01 +0.5);
+	int min_gap_y=int((double)mTable.getImageWidth()*mMinGapPercentageY*0.01 +0.5);
 	int margin=int((double)mTable.getImageWidth()*margin_percentage*0.01 +0.5);
 
 	std::vector<TRect> _results;
@@ -368,7 +376,7 @@ void ImageSegmentation::getResult(std::list<TRect>& results, double _max_width, 
 	{
 		for(int j=i+1; j<_results.size(); ++j)
 		{
-			if(mergeable(_results, i, j, max_width, min_gap))
+			if(mergeable(_results, i, j, max_width, min_gap_x, min_gap_y))
 			{
 				TRect& prevRect=_results[i];
 				TRect& rect=_results[j];
@@ -376,7 +384,7 @@ void ImageSegmentation::getResult(std::list<TRect>& results, double _max_width, 
 				prevRect=merge(prevRect, rect);
 
 				TRect mergeRect=prevRect;
-				mergeRect.enlarge(min_gap);
+				mergeRect.enlarge(min_gap_x);
 				
 				rect=TRect(-1,-1,-1,-1);
 				for(int k=0; k<_results.size(); k++)
@@ -420,7 +428,7 @@ void ImageSegmentation::_getResult(std::vector<TRect>& results)
 
 
 
-// thr_whiteº¸´Ù ¹àÀ¸¸é ¿©¹éÀ¸·Î °£ÁÖ. ¿©¹éÀÇ µÎ²²°¡ min_gap_pixelsº¸´Ù Á¼À¸¸é ¿©¹éÀ¸·Î Ã³¸® ¾ÈÇÔ, max_gap º¸´Ù ³ÐÀ¸¸é max_gap¸¸Å­¸¸ »ç¿ëµÇµµ·ÏÇÑ´Ù.
+// thr_white???? ??À¸?? ????À¸?? ????. ?????? ?Î²??? min_gap_pixels???? Á¼À¸?? ????À¸?? Ã³?? ????, max_gap ???? ??À¸?? max_gap??Å­?? ?????Çµ????Ñ´?.
 void detectLines(SummedAreaTable const& s, bool bHorizSplit, TRect const& domain, int min_gap, int max_gap, int thr_white, intIntervals& lines)
 {
 	intvectorn histogram;
@@ -563,7 +571,7 @@ void reflow(CImage& inout, int desired_width, int min_gap, int max_gap, int thr_
 			// line2: -----      ----     ---
 
 			// example 2:
-			// ~~------		// ½ÃÀÛºÎºÐÀÇ space°¡ µÑ·Î ÂÉ°³Áø´Ù.
+			// ~~------		// ???ÛºÎº??? space?? ?Ñ·? ?É°?????.
 			// if desired_width==5->
 			// line1: ~--    or  ~---  or ~----
 			// line2: ~----      ~---     ~---

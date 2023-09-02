@@ -46,7 +46,6 @@ public:
 	void getHorizHistogram(TRect const& domain, intvectorn& histogram) const;
 };
 
-// horiz split과 vertical split을 번갈아가면서 recursive하게 수행하여 쪼갠다.
 class ImageSegmentation
 {
 	SummedAreaTable const& mTable;
@@ -54,11 +53,13 @@ class ImageSegmentation
 	ImageSegmentation* mParent;
 	std::vector<ImageSegmentation*> mChildren;
 	bool mbHorizSplit;
-	double mMinGapPercentage;
+	double mMinGapPercentageX; //relative to image width
+	double mMinGapPercentageY; //relative to image width
+
 	int mThrWhite;
 public:
-	// thr_white보다 밝으면 여백으로 간주. 여백의 두께가 단축 기준으로 min_gap_percentage보다 좁으면 여백으로 처리 안함. 
-	ImageSegmentation(SummedAreaTable const& s, bool bHorizSplit, TRect const& domain,ImageSegmentation* mParent=NULL, double min_gap_percentage=2, int thr_white=254);
+	//ImageSegmentation(SummedAreaTable const& s, bool bHorizSplit, TRect const& domain,ImageSegmentation* mParent=NULL, double min_gap_percentage=2, int thr_white=254);
+	ImageSegmentation(SummedAreaTable const& s, bool bHorizSplit, TRect const& domain,ImageSegmentation* mParent, double min_gap_percentageX, double min_gap_percentageY, int thr_white);
 	~ImageSegmentation();
 
 	void segment();
