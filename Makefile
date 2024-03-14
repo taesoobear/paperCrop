@@ -50,7 +50,7 @@ install_dependencies_fedora:
 install: 
 	if test -d ~/bin/papercrop_bin; then echo "Test passed2"; else mkdir -p ~/bin/papercrop_bin; fi
 	cp -rf . ~/bin/papercrop_bin/
-	cd ~/bin/papercrop_bin;make
+	cd ~/bin/papercrop_bin;make clean;make
 	cp paperCrop.py ~/bin/paperCrop
 	cp paperCrop_auto.py ~/bin/paperCropAuto
 	chmod 700 ~/bin/paperCrop
