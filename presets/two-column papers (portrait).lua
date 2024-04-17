@@ -5,5 +5,5 @@ white_point=255
 option="(portrait) vertical scroll "..device.default_split
 crop_T = 5
 crop_B = 5
-crop_L = 0
+crop_L = 6
 crop_R = 0

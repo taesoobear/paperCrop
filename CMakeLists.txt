@@ -347,6 +347,7 @@ elseif(UNIX)
 
 endif()
 
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${paperCrop_SOURCE_DIR})
 
 IF(MSVC)
   target_link_libraries(paperCrop
