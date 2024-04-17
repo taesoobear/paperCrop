@@ -31,6 +31,7 @@ if( CMAKE_SIZEOF_VOID_P EQUAL 8 )
   add_definitions(-DAMD64)
 endif()
 
+add_definitions(-DNO_DEVIL)
 if(UNIX)
   set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}")
   # set(LUA_INCLUDE "/usr/include/lua5.1" )
@@ -44,20 +45,20 @@ if(UNIX)
   # find_package(Luabind REQUIRED)
   pkg_check_modules(Fontconfig REQUIRED fontconfig)
   pkg_check_modules(poppler REQUIRED )
-  pkg_check_modules(DevIL REQUIRED ILU)
+  #pkg_check_modules(DevIL REQUIRED ILU)
   endif()
   set(image_INCLUDE) # all in /usr/include 
   message("include directories:")
   message(${LUA_INCLUDE_DIR} "\n")
   message(${FLTK_INCLUDE_DIR} "\n")
-  message(${DevIL_INCLUDE_DIR} "\n")
+  #message(${DevIL_INCLUDE_DIR} "\n")
   #  message(${Luabind_INCLUDE_DIR} "\n")
   message(${FLTK_LIBRARIES} "\n")
   message(${Fontconfig_LIBRARIES} "\n")
   message("poppler:")
   message(${poppler_INCLUDE_DIRS} "\n")
   message(${poppler_LIBRARIES} "\n")
-  message(${DevIL_INCLUDE_DIRS} "\n")
+  #message(${DevIL_INCLUDE_DIRS} "\n")
 
   if(NOT poppler_LIBRARIES) # if empty
 	  if (APPLE)
@@ -70,7 +71,7 @@ else()
   set(LUA_INCLUDE "${paperCrop_SOURCE_DIR}/../Lua5.1.4/include")
   set(LUA_LIB "${paperCrop_SOURCE_DIR}/../lua5.1.4/lua5.1.lib")
   set(image_INCLUDE 
-	"${paperCrop_SOURCE_DIR}/devil/include"
+	  #"${paperCrop_SOURCE_DIR}/devil/include"
 	"${paperCrop_SOURCE_DIR}/FreeImage/Dist"
 	)
 
@@ -116,7 +117,7 @@ if(UNIX)
 			${paperCrop_SOURCE_DIR}/libharu-2.0.8/include
 			${poppler_INCLUDE_DIRS}
 			/usr/include/poppler
-			${DevIL_INCLUDE_DIRS}
+			#${DevIL_INCLUDE_DIRS}
 			./include 
 			.
 			./unix
@@ -132,7 +133,7 @@ if(UNIX)
 			/usr/include/poppler
 			/usr/local/include/poppler
 			/opt/homebrew/include/poppler
-			${DevIL_INCLUDE_DIRS}
+			#${DevIL_INCLUDE_DIRS}
 			./include 
 			.
 			./unix
@@ -171,7 +172,7 @@ if(UNIX)
 	${LUA_LIB}
 	${Fontconfig_LIBRARY_DIRS}
 	${poppler_LIBRARY_DIRS}
-	${DevIL_LIBRARY_DIRS}
+	#${DevIL_LIBRARY_DIRS}
 	/usr/lib/
 	)
 else()
@@ -279,6 +280,8 @@ set(src
   "./image/ImagePixel.h"
   "./image/ImageProcessor.cpp"
   "./image/ImageProcessor.h"
+  "./utility/util.cpp"
+  "./utility/util.h"
   "./utility/FlLayout.cpp"
   "./utility/FlLayout.h"
   "./utility/FltkAddon.cpp"
@@ -312,12 +315,12 @@ if(APPLE)
   target_link_libraries(paperCrop
 	${Fontconfig_LIBRARIES}
 	${FLTK_LIBRARIES}
-	${DevIL_LIBRARIES}
+	#${DevIL_LIBRARIES}
 	# fltk_images
 	# fltk
 	hpdf
-	ILU
-	IL
+	#ILU
+	#IL
 	${poppler_LIBRARIES}
 	freeimage
 	z
@@ -330,13 +333,13 @@ elseif(UNIX)
   target_link_libraries(paperCrop
 	${Fontconfig_LIBRARIES}
 	${FLTK_LIBRARIES}
-	${DevIL_LIBRARIES}
+	#${DevIL_LIBRARIES}
 	# fltk_images
 	# fltk
 	hpdf
 	X11
-	ILU
-	IL
+	#ILU
+	#IL
 	${poppler_LIBRARIES}
 	freeimage
 	z
@@ -370,8 +373,8 @@ IF(MSVC)
 	optimized ${paperCrop_SOURCE_DIR}/../fltk/lib/fltkpng.lib
 	optimized ${paperCrop_SOURCE_DIR}/../fltk/lib/fltkz.lib
 	optimized ${paperCrop_SOURCE_DIR}/../fltk/lib/fltkgl.lib
-	${paperCrop_SOURCE_DIR}/devil/lib/DevIl.lib
-	${paperCrop_SOURCE_DIR}/devil/lib/Ilu.lib
+	#${paperCrop_SOURCE_DIR}/devil/lib/DevIl.lib
+	#${paperCrop_SOURCE_DIR}/devil/lib/Ilu.lib
 	${paperCrop_SOURCE_DIR}/FreeImage/Dist/FreeImage.lib
 	${paperCrop_SOURCE_DIR}/libharu-2.0.8/libhpdf.lib
 	comctl32.lib 

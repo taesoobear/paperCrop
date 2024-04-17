@@ -1,7 +1,11 @@
+#ifndef _IMAGEPIXEL_H_
+#define _IMAGEPIXEL_H_
 #pragma once
 
 #include "Image.h"
-
+#ifdef DrawText
+#undef DrawText
+#endif
 class CImagePixel
 {
 public:
@@ -19,7 +23,7 @@ public:
 	{
 		return m_pCPP[y][x];
 	}
-	
+
 	inline CPixelRGB8& Pixel(int x, int y) const
 	{
 		return m_pCPP[y][x];
@@ -27,11 +31,9 @@ public:
 
 	inline CPixelRGB8* operator[](int i) const	{ return m_pCPP[i];}
 
-	void SetPixel(float x, float y, CPixelRGB8 color); ///< (0,1)ÁÂÇ¥°è¿¡¼­ Á¤ÀÇµÈ Á¡À» ±×¸°´Ù. -> ´À¸®´Ù´Â Á¡¿¡ ÁÖÀÇ. Á»´õ ºü¸£°Ô Á¡À» Âï°í ½ÍÀº °æ¿ì CColorPixelPtrÅ¬·¡½º »ç¿ë. »ç¿ë¹ıÀº ImagePixel.cppÀÇ SetPixelÇÔ¼ö Âü°í
-	
-	
+	void SetPixel(float x, float y, CPixelRGB8 color); ///< (0,1)ì¢Œí‘œê³„ì—ì„œ ì •ì˜ëœ ì ì„ ê·¸ë¦°ë‹¤. -> ëŠë¦¬ë‹¤ëŠ” ì ì— ì£¼ì˜.
 	CPixelRGB8 GetPixel(float x, float y,int& count);	///< bilinear filtering getpixel
-	
+
 	void DrawHorizLine(int x, int y, int width, CPixelRGB8 color);
 	void DrawVertLine(int x, int y, int height, CPixelRGB8 color,bool bDotted=false);
 	void DrawLine(int x1, int y1, int x2, int y2, CPixelRGB8 color);
@@ -51,3 +53,11 @@ private:
 	std::vector<CPixelRGB8 *> m_pCPP;
 };
 
+class CEditableImage : public CImagePixel
+{
+	CImage* m_pImage;
+public:
+	CEditableImage (int width, int height);
+	~CEditableImage ();
+};
+#endif

@@ -1,5 +1,7 @@
+#ifndef _IMAGEPROCESSOR_H_
+#define _IMAGEPROCESSOR_H_
 //
-// ImageProcessor.h 
+// ImageProcessor.h
 //
 // Copyright 2004 by Taesoo Kwon.
 //
@@ -23,9 +25,10 @@
 
 #include "Image.h"
 
+// for backward compatibility
+#define CImageProcessor Imp
 namespace Imp
 {
-	// new API
 	void drawBox(CImage& inout, TRect const& t, int R, int G, int B);
 	void sharpen(CImage& inout, double factor, int iterations);
 	void contrast(CImage& inout, double factor);
@@ -37,54 +40,24 @@ namespace Imp
 	void concatVertical(CImage& out, CImage const& a, CImage const& b);
 	void crop(CImage& out, CImage const& in, int left, int top, int right, int bottom);
 	void rotateRight(CImage& other);
+	void rotateRight(CImage& out, CImage const& in);
 	void rotateLeft(CImage& other);
+	void rotateLeft(CImage& out, CImage const& in);
 
-	// old API (but not deprecated yet)
 	CImage* Clone(CImage* pInput);
-	void Crop(CImage* pOutput, CImage *pInput, const TRect &rect);	//!< ¿ÃπÃ ª˝º∫µ» output¿ÃπÃ¡ˆø° ≈©∑”«“ øµø™ ¿˙¿Â
-	CImage* Crop(CImage* pInput, const TRect& rect);	//!< cropµ» imageª˝º∫
-	CImage* CropCentered(CImage *pInput, int width, int height);
-	CImage* RotateRight(CImage* pInput);
-	CImage* RotateLeft(CImage* pInput);
-	CImage* RotateHalf(CImage* pInput);
-	CImage* Resize(CImage* pInput, int width, int height);
-	CImage* StitchHoriz(CImage* pLeft, CImage* pRight);	
-	//!< vertex:0 to n-1 , edge : integer 2∞≥, ¡Ô list¿« ±Ê¿Ã¥¬ 2¿«πËºˆø©æﬂ «‘. motion graphµÓ¿ª debug«“∂ß ªÁøÎ ∞°¥…
-	void DrawGraph(CImage* pInput, int numVertex, std::list<int>& listEdge);	
-	
-	CPixelRGB8 GetColor(int i);
-
-	void SafeDelete(CImage* pImage, const char* filename);
 
 	enum {LINE_CHART, BAR_CHART};
+	void SaveAndDeleteImage(CImage* pImage, const char* filename);
 
-	CImage* Plot(const vectorn& x, const vectorn& y);
-	CImage* Plot(const matrixn& samples, const vectorn& min, const vectorn& max);
-	CImage* DrawChart(const vectorn& vector, int chart_type, float min=0, float max=0); 	//!< 0 frame∫Œ≈Õ n-1«¡∑π¿”±Ó¡ˆ¿« float value∏¶ ±◊∏∞¥Ÿ.
-	CImage* DrawChart(const matrixn& matrix, int chart_type, vectorn& aMin, vectorn& aMax, double* aY=NULL);	//!< 0 frame∫Œ≈Õ n-1«¡∑π¿”±Ó¡ˆ¿« ø©∑Ø signalµÈ¿ª ±◊∏∞¥Ÿ.
-	CImage* DrawChart(const matrixn& matrix, int chart_type, float min=0, float max=0, float horizLine=FLT_MAX);		//!< 0 frame∫Œ≈Õ n-1«¡∑π¿”±Ó¡ˆ¿« ø©∑Ø signalµÈ¿ª ±◊∏∞¥Ÿ.
-	CImage* DrawChart(const matrixn& matrix, float min=0, float max=0);						//!< 0 frame∫Œ≈Õ n-1«¡∑π¿”±Ó¡ˆ¿« ∏÷∆º dimensional signal¿ª ±◊∏∞¥Ÿ.
+	CPixelRGB8 GetColor(int i);
+
+	CImage* DrawChart(const vectorn& vector, int chart_type, float min=0, float max=0); 	//!< 0 frameÎ∂ÄÌÑ∞ n-1ÌîÑÎ†àÏûÑÍπåÏßÄÏùò float valueÎ•º Í∑∏Î¶∞Îã§.
+	CImage* DrawChart(const matrixn& matrix, int chart_type, vectorn const& aMin, vectorn const& aMax, double* aY=NULL);	//!< 0 frameÎ∂ÄÌÑ∞ n-1ÌîÑÎ†àÏûÑÍπåÏßÄÏùò Ïó¨Îü¨ signalÎì§ÏùÑ Í∑∏Î¶∞Îã§.
+	CImage* DrawChart(const matrixn& matrix, int chart_type, float min=0, float max=0, float horizLine=FLT_MAX);		//!< 0 frameÎ∂ÄÌÑ∞ n-1ÌîÑÎ†àÏûÑÍπåÏßÄÏùò Ïó¨Îü¨ signalÎì§ÏùÑ Í∑∏Î¶∞Îã§.
+	CImage* DrawChart(const matrixn& matrix, float min=0, float max=0);						//!< 0 frameÎ∂ÄÌÑ∞ n-1ÌîÑÎ†àÏûÑÍπåÏßÄÏùò Î©ÄÌã∞ dimensional signalÏùÑ Í∑∏Î¶∞Îã§.
 	CImage* DrawChart(const bitvectorn& ab, CPixelRGB8 color);
-	CImage* DrawChart(const intvectorn& ab, const char* colormapfile="resource/default/colormap.bmp");
-	//CImage* DrawChartText(const intvectorn& ab, TArray<TString>* translationTable=NULL);
-	CImage* DrawMatrix(matrixn& matrix);
-	CImage* DrawMatrix(matrixn& matrix, double& min, double& max);
-	CImage* DrawMatrix2(matrixn& matrix, double min=0, double max=0);
-	CImage* DrawSpectrum(vectorn& signal, int window, int offset);	// draw chart
-	
-	void LoadMatrix(matrixn& matrix, const char* filename);
-	void SaveMatrix(matrixn& matrix, const char* filename);
-	// filename¿ª "filename_prefix_minvalue_maxvalue.bmp"∑Œ «—¥Ÿ.
-	void SaveMatrixAndInfo(matrixn& matrix, const char* filename_prefix);	
-	
-	
-	/// pInput¿ª 2x2 matrix pTransf∏¶ ∞°¡ˆ∞Ì transform«— ¿ÃπÃ¡ˆ∏¶ return«—¥Ÿ.
-	/*!
-		(source_x,source_y)*matrix=(target_x,target_y)
-	*/
-	CImage* Transform(matrixn& transf, CImage* pInput);
-	CImage* Rotate(float radian, CImage* pInput);	
-	
+	CImage* DrawChart(const intvectorn& ab, const char* colormapfile="Resource/default/colormap.bmp");
+	CImage* DrawChartText(const intvectorn& ab, TStrings* translationTable=NULL);
 	void ChangeChartPrecision(int precision);
 	void DefaultPrecision();
 
@@ -96,5 +69,4 @@ namespace Imp
 	}
 }
 
-
-
+#endif

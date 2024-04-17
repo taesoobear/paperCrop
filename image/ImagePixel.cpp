@@ -44,13 +44,13 @@ CPixelRGB8 CImagePixel::GetPixel(float x, float y, int& count)
 	y2=y1+1;
 
 	count=1;
-	// 4°³ ÇÈ¼¿Áß ÇÏ³ª¶óµµ ¹Û¿¡ ÀÖ´Â °æ¿ì 
+	// 4ê°œ í”½ì…€ì¤‘ í•˜ë‚˜ë¼ë„ ë°–ì— ìˆëŠ” ê²½ìš° 
 	if(x1<0 || x2>=m_pInput->GetWidth() || y1<0 || y2>=m_pInput->GetHeight())
 	{
 		count=0;
 		color=CPixelRGB8 (0,0,0);
 	}
-	// ¸ğµÎ ¾È¿¡ ÀÖ´Â°æ¿ì 
+	// ëª¨ë‘ ì•ˆì— ìˆëŠ”ê²½ìš° 
 	else
 	{
 		CPixelRGB8 c1,c2,c3,c4;
@@ -179,7 +179,6 @@ void CImagePixel::DrawBox(const TRect& _rect, CPixelRGB8 sColor)
 		// fast version
 		CPixelRGB8* aBuffer;
 		int width=rect.right-rect.left;
-
 		if(width>0)
 		{
 			aBuffer=new CPixelRGB8[width];
@@ -270,7 +269,7 @@ void CImagePixel::DrawPattern(int x, int y, CImage* pPattern, bool bUseColorkey,
 	DrawPattern(x,y,patternPixel,bUseColorkey,colorkey,bOverideColor,overrideColor);
 }
 
-void CImagePixel::DrawLine(int x1, int y1, int x2, int y2, CPixelRGB8 color)	//!< inputptr, inputptr2Áß ÇÏ³ª´Â NULL·Î ÁÙ°Í.
+void CImagePixel::DrawLine(int x1, int y1, int x2, int y2, CPixelRGB8 color)	//!< inputptr, inputptr2ì¤‘ í•˜ë‚˜ëŠ” NULLë¡œ ì¤„ê²ƒ.
 {
 	int dx,dy,x,y,x_end,p,const1,const2,y_end;
 	int delta;
@@ -279,14 +278,14 @@ void CImagePixel::DrawLine(int x1, int y1, int x2, int y2, CPixelRGB8 color)	//!
 	
 	if (((y1-y2)>0 && (x1-x2)>0 ) || (y1-y2)<0 && (x1-x2)<0)
 	{
-		delta=1;							//±â¿ï±â >0
+		delta=1;							//ê¸°ìš¸ê¸° >0
 	}
 	else
 	{
-		delta=-1;							//±â¿ï±â <0
+		delta=-1;							//ê¸°ìš¸ê¸° <0
 	}
 	
-	if(dx>dy)								//±â¿ï±â 0 < |m| <=1
+	if(dx>dy)								//ê¸°ìš¸ê¸° 0 < |m| <=1
 	{
 		p=2*dy-dx;
 		const1=2*dy;
@@ -316,7 +315,7 @@ void CImagePixel::DrawLine(int x1, int y1, int x2, int y2, CPixelRGB8 color)	//!
 				p=p+const2;
 			}
 			SetPixel( x,y, color);
-		}									//±â¿ï±â |m| > 1
+		}									//ê¸°ìš¸ê¸° |m| > 1
 	}
 	else
 	{
@@ -432,3 +431,15 @@ void CImagePixel::DrawText(int x, int y, const char* str, bool bUserColorKey, CP
 		DrawSubPattern(x+i*FONT_WIDTH , y, patternPixel, TRect(left,top,left+FONT_WIDTH , top+FONT_HEIGHT), bUserColorKey, colorkey);
 	}
 }
+
+CEditableImage ::CEditableImage (int width, int height)
+	{
+		m_pImage=new CImage();
+		m_pImage->Create(width, height);
+		Init(m_pImage);
+	}
+
+CEditableImage ::	~CEditableImage ()
+	{
+		delete m_pImage;
+	}

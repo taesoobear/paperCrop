@@ -50,7 +50,7 @@ void MainWin::onIdle()
 
 TString g_arg;
 #ifdef _MSC_VER
-//#ifdef _DEBUG	// console·Î ºôµåÇÏµµ·Ï ÇØ³ùÀ½.
+//#ifdef _DEBUG	// console?? ?????Ïµ??? ?Ø³?À½.
 int _tmain(int argc, _TCHAR* argv[])
 /*#else
 int APIENTRY _tWinMain(HINSTANCE hInstance,
@@ -69,8 +69,8 @@ int main(int argc, char* argv[])
 	Fl::scheme("plastic");
 #endif
 
-	ilInit();
-	iluInit();
+	//ilInit();
+	//iluInit();
 
 	if (argc==2)
 		g_arg=argv[1];

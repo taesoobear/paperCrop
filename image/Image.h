@@ -1,7 +1,7 @@
 #ifndef _IMAGE_H_
 #define _IMAGE_H_
 //
-// Image.H 
+// Image.H
 //
 // Copyright 2004 by Taesoo Kwon.
 //
@@ -26,6 +26,7 @@
 
 
 typedef unsigned char uchar;
+
 struct Int2D
 {
 	Int2D(){}
@@ -52,9 +53,9 @@ struct TRect
     TRect( int l, int t, int r, int b )
     {
         left = l;
-        top = t;   
+        top = t;
         right = r;
-        bottom = b;                
+        bottom = b;
     }
 
 	int Width() const				{ return right-left;}
@@ -62,7 +63,7 @@ struct TRect
 	bool contains(Int2D pt, double margin=0)	const	{ if(pt.x>=left -margin && pt.y>=top -margin && pt.x<right +margin && pt.y<bottom+margin) return true; return false;}
 	
 	void enlarge(int r)				{ left-=r; right+=r; top-=r; bottom+=r;}
-	int corner(Int2D pt) const		
+	int corner(Int2D pt) const
 	{
 		if(ABS(pt.x-left)<7 && ABS(pt.y-top)<7)
 			return 1;
@@ -89,25 +90,25 @@ class CPixels: public _tvectorn<CPixelRGB8, uchar>
 {
 protected:
 	CPixels (uchar* ptrr, int size, int stride)
-:_tvectorn<CPixelRGB8, uchar>(ptrr,size,stride){}
+		:_tvectorn<CPixelRGB8, uchar>(ptrr,size,stride){}
 public:
 	CPixels ():_tvectorn<CPixelRGB8, uchar>(){}
 
-	// °ªÀ» Ä«ÇÇÇØ¼­ ¹Ş¾Æ¿Â´Ù.	
+	// ê°’ì„ ì¹´í”¼í•´ì„œ ë°›ì•„ì˜¨ë‹¤.
 	template <class VecType>
 	CPixels (const VecType& other)	{ assign(other);}
 
 	explicit CPixels ( int x):_tvectorn<CPixelRGB8, uchar>() { setSize(x);}
 	~CPixels(){}
 
-	
-	// L-value·Î »ç¿ëµÉ¼ö ÀÖ´Â, reference array¸¦ ¸¸µé¾î return ÇÑ´Ù. 
+
+	// L-valueë¡œ ì‚¬ìš©ë ìˆ˜ ìˆëŠ”, reference arrayë¥¼ ë§Œë“¤ì–´ return í•œë‹¤.
 	// ex) v.range(0,2).setValues(2, 1.0, 2.0);
 	CPixelsView range(int start, int end, int step=1);
 	const CPixelsView range(int start, int end, int step=1) const	;
 
 	template <class VecType>
-void operator=(const VecType& other)	{ _tvectorn<CPixelRGB8, uchar>::assign(other);}
+	void operator=(const VecType& other)	{ _tvectorn<CPixelRGB8, uchar>::assign(other);}
 
 	CPixelRGB8 average() const;
 };
@@ -115,22 +116,22 @@ void operator=(const VecType& other)	{ _tvectorn<CPixelRGB8, uchar>::assign(othe
 class CPixelsView :public CPixels
 {
 public:
-	// L-value·Î »ç¿ëµÉ¼ö ÀÖ´Â, reference array·Î ¸¸µç´Ù. 
+	// L-valueë¡œ ì‚¬ìš©ë ìˆ˜ ìˆëŠ”, reference arrayë¡œ ë§Œë“ ë‹¤.
 	CPixelsView (uchar* ptrr, int size, int stride):CPixels(ptrr, size, stride){}
-	// °ªÀ» reference·Î ¹Ş¾Æ¿Â´Ù.
+	// ê°’ì„ referenceë¡œ ë°›ì•„ì˜¨ë‹¤.
 	template <class VecType>
 	CPixelsView (const VecType& other)	{ assignRef(other);}
 
 	~CPixelsView (){}
 
-	// L-value·Î »ç¿ëµÇ´Â °æ¿ì, °ªÀ» copyÇÑ´Ù.
+	// L-valueë¡œ ì‚¬ìš©ë˜ëŠ” ê²½ìš°, ê°’ì„ copyí•œë‹¤.
 	template <class VecType>
-void operator=(const VecType& other)	{ _tvectorn<CPixelRGB8, uchar>::assign(other);}
+	void operator=(const VecType& other)	{ _tvectorn<CPixelRGB8, uchar>::assign(other);}
 
 };
 
 
-class CImage  
+class CImage
 {
 private:
 	Int2D _size;
@@ -138,6 +139,7 @@ private:
 	int _id;
 	static int __uniqueID;
 	bool _flipped;// undoing devil's dirty trick
+
 public:
 	// only for use in Imp
 	int _getILid()	const	{return _id;}
@@ -149,29 +151,30 @@ public:
 	virtual ~CImage();
 	int GetWidth() const ;
 	int GetHeight() const ;
-	
+
 	void SetData(int width, int height, uchar* dataPtr, int stride);
 	// assumes RGB8 format.
 	bool Create(int width, int height);
-	
+
 	void CopyFrom(CImage const& other);
 	const uchar* GetData() const	{ return _dataPtr;}
 	uchar* GetData()				{ return _dataPtr;}
 	bool IsDataNull()				{ return _dataPtr==NULL;}
 
 	bool Load(const char* filename);
-	bool Save(const char* filename);
-	bool save(const char* filename, int BPP);
+	bool Save(const char* filename) const;
+	bool save(const char* filename, int BPP) const;
 
-	CPixelsView GetHorizLine(int i)		
+	CPixelsView GetHorizLine(int i)
 	{
 		return CPixelsView(_dataPtr+_stride*(GetHeight()-i-1), GetWidth(), 3);
 	}
 
-CPixelsView GetVertLine(int i)
+	CPixelsView GetVertLine(int i)
 	{
 		return CPixelsView(_dataPtr+3*i, GetHeight(), _stride);
 	}
+
 	// slow. use GetHorizLine when pixels are sequencially accessible.
 	CPixelRGB8 * GetPixel(int i, int j) const
 	{
@@ -183,4 +186,6 @@ CPixelsView GetVertLine(int i)
 
 };
 
+vector3 rgb2hsv(vector3 const& in); // r,g,b : a fraction between 0 and 1
+vector3 hsv2rgb(vector3 const& in); // h : angle in degrees, s,v : a fraction between 0 and 1
 #endif
