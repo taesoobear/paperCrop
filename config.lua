@@ -351,6 +351,7 @@ function processPageSubRoutine(imageM, pageNo, width, numRects)
 		return 
 	end
 
+	--imageM:save("bdebug"..pageNo..'.jpg',24)
 	for rectNo=0, numRects-1 do
 		win:setStatus("processing"..pageNo.."_"..rectNo)
 		local image=CImage()
@@ -364,6 +365,7 @@ function processPageSubRoutine(imageM, pageNo, width, numRects)
 			image:drawBox(TRect(0,0, image:GetWidth(), image:GetHeight()), 255,255,255)
 			image:blit(imageOld, TRect(0,0,math.min(imageOld:GetWidth(), width),imageOld:GetHeight()),0,0)	 
 		end
+		--image:save("debug"..pageNo..'_'..rectNo..'.jpg',24)
 
 		--print(width, image:GetWidth())
 
@@ -374,6 +376,7 @@ function processPageSubRoutine(imageM, pageNo, width, numRects)
 
 		end
 	end
+	--imageM:save("debug"..pageNo..'.jpg',24)
 	trimVertSpaces(imageM, 2, max_vspace, 255)
 end
 

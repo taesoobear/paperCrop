@@ -25,17 +25,19 @@
 
 #include "stdafx.h"
 #include "Image.h"
+#ifndef NO_DEVIL
 #include <IL/il.h>
 #include <IL/ilu.h>
-
-#define CHECK_VALID ASSERT(!_dataPtr || (_dataPtr==ilGetData() && GetWidth()==ilGetInteger(IL_IMAGE_WIDTH) && GetHeight()==ilGetInteger(IL_IMAGE_HEIGHT)))
-
+#endif
+#ifndef NO_FREEIMAGE
+#include "FreeImage.h"
+#endif
 CPixelsView CPixels::range(int start, int end, int step)
 {
 	return _range<CPixelsView >(start,end,step);
 }
 
-const CPixelsView CPixels::range(int start, int end, int step) const	
+const CPixelsView CPixels::range(int start, int end, int step) const
 {
 	return ((CPixels*)this)->range(start, end, step);
 }
@@ -57,86 +59,116 @@ CPixelRGB8 CPixels::average() const
 }
 
 ;
-//int CImage::__uniqueID=1;
+int CImage::__uniqueID=1;
 
 CImage::CImage()
-	:_dataPtr(NULL),
+	:
+	_size(0,0),
+	_dataPtr(NULL),
 	_stride(0),
-	_size(0,0)//,
-//	_id(__uniqueID)
+	_id(__uniqueID)
 {
-//	if(__uniqueID==1)
-//	{
-//	}
+#ifndef NO_DEVIL
+	if(__uniqueID==1)
+	{
+		ilInit();
+		iluInit();
+	}
 
-//	__uniqueID++;
+	__uniqueID++;
 	ILuint images[1];
 	ilGenImages(1, images);
 	_id=images[0];
-
+#else
+	__uniqueID++;
+#endif
 }
 
 CImage::~CImage()
 {
-#ifdef _DEBUG
-	ilBindImage(_id);
-	CHECK_VALID;
-#endif
-
+#ifndef NO_DEVIL
 	if(_dataPtr)
 	{
 		ILuint images[1];
 		images[0]=_id;
 		ilDeleteImages(1, images);
 	}
+#else
+	if(_dataPtr)
+	{
+		delete [] _dataPtr;
+		_dataPtr=NULL;
+	}
+#endif
 }
 
-int CImage::GetWidth() const 
+int CImage::GetWidth() const
 {return _size.x;}
-int CImage::GetHeight()const 
+int CImage::GetHeight()const
 {return _size.y;}
 
 void CImage::CopyFrom(CImage const& other)
 {
+
+
 	_size.x=other.GetWidth();
 	_size.y=other.GetHeight();
+	#ifndef NO_DEVIL
 	ilBindImage(_id);
 	ilCopyImage(other._id);
 	_dataPtr=ilGetData();
 	_stride=GetWidth()*3;
+#else
+	_dataPtr=new uchar[_size.x*_size.y*3];
+	_stride=GetWidth()*3;
+	for(int y=0; y<_size.y; y++)
+		memcpy(&_dataPtr[y*_stride], &other._dataPtr[y*other._stride], _stride);
 
-	CHECK_VALID;
+	#endif
 }
 
 void CImage::SetData(int width, int height, uchar* dataPtr, int stride)
 {
+#ifndef NO_DEVIL
 	ilBindImage(_id);
 	ilTexImage(width, height, 1, 3, IL_RGB, IL_UNSIGNED_BYTE, NULL);
 	_size=Int2D(width, height);
-	
+
 	for(int i=0; i<GetHeight(); i++)
 	{
 		int ii=GetHeight()-i-1;
-		ilSetPixels(0,i,0, GetWidth(), 1, 1, IL_RGB, IL_UNSIGNED_BYTE, dataPtr+stride*ii); 
+		ilSetPixels(0,i,0, GetWidth(), 1, 1, IL_RGB, IL_UNSIGNED_BYTE, dataPtr+stride*ii);
 	}
 
 	_dataPtr=ilGetData();
 	_stride=GetWidth()*3;
-
-	CHECK_VALID;
+#else
+	_size.x=width;
+	_size.y=height;
+	_dataPtr=new uchar[width*height*3];
+	_stride=GetWidth()*3;
+	for(int y=0; y<_size.y; y++)
+		memcpy(&_dataPtr[y*_stride], &dataPtr[(_size.y-y-1)*stride], _stride);
+#endif
 }
 
 // assumes RGB8 format.
 bool CImage::Create(int width, int height)
 {
+#ifndef NO_DEVIL
 	_size.x=width;
 	_size.y=height;
 	ilBindImage(_id);
 	ilTexImage(width, height, 1, 3, IL_RGB, IL_UNSIGNED_BYTE, NULL);
 	_dataPtr=ilGetData();
 	_stride=GetWidth()*3;
-	CHECK_VALID;
-
+#else
+	_size.x=width;
+	_size.y=height;
+	_dataPtr=new uchar[width*height*3];
+	_stride=GetWidth()*3;
+	memset((void*)_dataPtr, 200, width*height*3);
+#endif
 	return true;
 }
 
@@ -164,6 +196,30 @@ static void CImage_flipY(CImage& inout)
 }
 bool CImage::Load(const char* filename)
 {
+#ifndef NO_FREEIMAGE
+	FREE_IMAGE_FORMAT formato = FreeImage_GetFileType(filename,0);
+	FIBITMAP* imagen = FreeImage_Load(formato, filename);
+	FIBITMAP* temp = imagen;  
+	imagen = FreeImage_ConvertTo32Bits(imagen);
+	FreeImage_Unload(temp);
+
+	_size.x = FreeImage_GetWidth(imagen);
+	_size.y = FreeImage_GetHeight(imagen);
+	_dataPtr=new unsigned char[32*_size.x*_size.y];
+	_stride=GetWidth()*3;
+
+	char* pixeles = (char*)FreeImage_GetBits(imagen);
+
+	for(int j= 0; j<_size.x*_size.y; j++)
+	{
+		_dataPtr[j*3+0]= pixeles[j*4+2];
+		_dataPtr[j*3+1]= pixeles[j*4+1];
+		_dataPtr[j*3+2]= pixeles[j*4+0];
+		//_dataPtr[j*4+3]= pixeles[j*4+3];
+	}
+	FreeImage_Unload(imagen);
+#else
+    #ifndef NO_DEVIL
 	ilBindImage(_id);
 	ilLoadImage(filename);
 	ilConvertImage(IL_RGB, IL_UNSIGNED_BYTE);
@@ -171,8 +227,9 @@ bool CImage::Load(const char* filename)
 	_size.y= ilGetInteger(IL_IMAGE_HEIGHT);
 	_dataPtr=ilGetData();
 	_stride=GetWidth()*3;
-	TString ext=TString(filename).right(3).toUpper();
-	if (ext=="JPG" || ext=="PNG")
+	#endif
+#endif
+	if (TString(filename).right(3).toUpper()=="JPG" ||TString(filename).right(3).toUpper()=="PNG")
 	{
 		CImage_flipY(*this);
 		_flipped=true;
@@ -180,19 +237,23 @@ bool CImage::Load(const char* filename)
 	else
 		_flipped=false;
 
+
+	//Save("out.jpg");
 	return true;
 }
 
-#include <IL/il.h>
-#include <IL/ilu.h>
+
+namespace Imp
+{
+	void DeleteFile( const char* filename);
+}
 
 namespace Imp
 {
 	bool IsFileExist(const char* filename);
 }
 
-
-#include "FreeImage.h"
+#ifndef NO_FREEIMAGE
 //#pragma comment(lib, "FreeImage/Dist/FreeImage.lib")
 
 /** Generic image writer
@@ -211,7 +272,6 @@ bool GenericWriter(FIBITMAP* dib, const char* lpszPathName, int flag=0) {
 		if(fif != FIF_UNKNOWN ) {
 			// check that the plugin has sufficient writing and export capabilities ...
 			WORD bpp = FreeImage_GetBPP(dib);
-			//printf("%d \n", bpp);
 			if(FreeImage_FIFSupportsWriting(fif) && FreeImage_FIFSupportsExportBPP(fif, bpp)) {
 				// ok, we can save the file
 				bSuccess = FreeImage_Save(fif, dib, lpszPathName, flag);
@@ -270,6 +330,7 @@ static void CImage_SaveFreeImage(CImage & image, const char* filename, int BPP=-
 		}
 	}
 
+
 	
 	TString ext=TString(filename).right(3).toUpper();
 
@@ -310,20 +371,17 @@ static void CImage_SaveFreeImage(CImage & image, const char* filename, int BPP=-
 	CImage_flipY(image);
 #endif
 }
+#endif
 
-bool CImage::Save(const char* filename)
+bool CImage::Save(const char* filename) const
 {
+	/*
 	if(Imp::IsFileExist(filename))
 	{
-		if(!Msg::confirm("Do you want to overwrite file %s?", filename))
-			return false;
-#if defined( linux) || defined (__APPLE__)
-		remove(filename);
-#else
-		DeleteFile(filename);
-#endif
+	//	if(!Msg::confirm("Do you want to overwrite file %s?", filename))
+	//		return false;
+		deleteFile(filename);
 	}
-	/*
 
 	TString ext=TString(filename).right(3).toUpper();
 	if(ext=="BMP" || ext=="GIF")
@@ -350,20 +408,18 @@ bool CImage::Save(const char* filename)
 	return 1;
 }
 
-bool CImage::save(const char* filename, int BPP)
+bool CImage::save(const char* filename, int BPP) const
 {
 	if(Imp::IsFileExist(filename))
 	{
-		if(!Msg::confirm("Do you want to overwrite file %s?", filename))
-			return false;
-#if defined( linux)||defined(__APPLE__)
-		remove(filename);
-#else
-		DeleteFile(filename);
-#endif
+//		if(!Msg::confirm("Do you want to overwrite file %s?", filename))
+//			return false;
+		deleteFile(filename);
 	}
 
-	CImage_SaveFreeImage(*this, filename, BPP);
+#ifndef NO_FREEIMAGE
+	CImage_SaveFreeImage((CImage&)(*this), filename, BPP);
+#endif
 	return true;
 }
 
@@ -655,4 +711,141 @@ void applyFloydSteinberg(CImage& _bitmapData, int _levels)
 			c.B=nb;
 		}
 	}
+}
+
+typedef struct {
+    double r;       // a fraction between 0 and 1
+    double g;       // a fraction between 0 and 1
+    double b;       // a fraction between 0 and 1
+} rgb;
+
+typedef struct {
+    double h;       // angle in degrees
+    double s;       // a fraction between 0 and 1
+    double v;       // a fraction between 0 and 1
+} hsv;
+
+static hsv   rgb2hsv(rgb in);
+static rgb   hsv2rgb(hsv in);
+
+vector3 rgb2hsv(vector3 const& _in)
+{
+	rgb in;
+	in.r=_in.x;
+	in.g=_in.y;
+	in.b=_in.z;
+	hsv out=rgb2hsv(in);
+	return vector3(out.h, out.s, out.v);
+}
+vector3 hsv2rgb(vector3 const& _in)
+{
+	hsv in;
+	in.h=_in.x;
+	in.s=_in.y;
+	in.v=_in.z;
+	rgb out=hsv2rgb(in);
+	return vector3(out.r, out.g, out.b);
+}
+
+hsv rgb2hsv(rgb in)
+{
+    hsv         out;
+    double      min, max, delta;
+
+    min = in.r < in.g ? in.r : in.g;
+    min = min  < in.b ? min  : in.b;
+
+    max = in.r > in.g ? in.r : in.g;
+    max = max  > in.b ? max  : in.b;
+
+    out.v = max;                                // v
+    delta = max - min;
+    if (delta < 0.00001)
+    {
+        out.s = 0;
+        out.h = 0; // undefined, maybe nan?
+        return out;
+    }
+    if( max > 0.0 ) { // NOTE: if Max is == 0, this divide would cause a crash
+        out.s = (delta / max);                  // s
+    } else {
+        // if max is 0, then r = g = b = 0              
+        // s = 0, h is undefined
+        out.s = 0.0;
+        out.h = NAN;                            // its now undefined
+        return out;
+    }
+    if( in.r >= max )                           // > is bogus, just keeps compilor happy
+        out.h = ( in.g - in.b ) / delta;        // between yellow & magenta
+    else
+    if( in.g >= max )
+        out.h = 2.0 + ( in.b - in.r ) / delta;  // between cyan & yellow
+    else
+        out.h = 4.0 + ( in.r - in.g ) / delta;  // between magenta & cyan
+
+    out.h *= 60.0;                              // degrees
+
+    if( out.h < 0.0 )
+        out.h += 360.0;
+
+    return out;
+}
+
+
+rgb hsv2rgb(hsv in)
+{
+    double      hh, p, q, t, ff;
+    long        i;
+    rgb         out;
+
+    if(in.s <= 0.0) {       // < is bogus, just shuts up warnings
+        out.r = in.v;
+        out.g = in.v;
+        out.b = in.v;
+        return out;
+    }
+    hh = in.h;
+    if(hh >= 360.0) hh = 0.0;
+    hh /= 60.0;
+    i = (long)hh;
+    ff = hh - i;
+    p = in.v * (1.0 - in.s);
+    q = in.v * (1.0 - (in.s * ff));
+    t = in.v * (1.0 - (in.s * (1.0 - ff)));
+
+    switch(i) {
+    case 0:
+        out.r = in.v;
+        out.g = t;
+        out.b = p;
+        break;
+    case 1:
+        out.r = q;
+        out.g = in.v;
+        out.b = p;
+        break;
+    case 2:
+        out.r = p;
+        out.g = in.v;
+        out.b = t;
+        break;
+
+    case 3:
+        out.r = p;
+        out.g = q;
+        out.b = in.v;
+        break;
+    case 4:
+        out.r = t;
+        out.g = p;
+        out.b = in.v;
+        break;
+    case 5:
+    default:
+        out.r = in.v;
+        out.g = p;
+        out.b = q;
+        break;
+    }
+    return out;     
 }

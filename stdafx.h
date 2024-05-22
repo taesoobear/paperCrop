@@ -135,6 +135,7 @@
 #include <FL/Fl_Int_Input.H>
 
 #include "utility/TypeString.h"
+#include "utility/util.h"
 
 #ifdef _DEBUG		
 #define ASSERT(x) assert(x)
