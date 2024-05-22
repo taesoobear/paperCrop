@@ -1,4 +1,4 @@
-# paperCrop v0.5
+# paperCrop v0.6
 
 Multi-column PDF files on 6 to 10 inch displays.
 
