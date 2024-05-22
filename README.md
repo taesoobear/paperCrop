@@ -4,8 +4,8 @@ Multi-column PDF files on 6 to 10 inch displays.
 
 About
 =
-This program converts PDF documents such as articles, and academic papers into a PDF (or image sequence) so that it can be read on a small screen of e-book devices or smartphones.
-(I developed this program partly because my kindle oasis and scribe have so many bugs in their PDF implementation. This tool can optimize any PDFs to work on kindles robustly.)
+This program converts PDF documents such as articles and academic papers into a PDF (or an image sequence) so that it can be read on a small screen of e-book devices or smartphones.
+(I developed this program partly because all my ebook devices are limited in their PDF implementation. This tool can optimize any PDFs to work on the readers robustly.)
 
 Usage
 =
@@ -23,7 +23,7 @@ Open a PDF file (by clicking Load button, or drag-and-drop)
 
 (Optional) choose how many columns are in the pdf file, and then click the update button.
 
-if results are not satisfactory, modify the MIN gap, MIN text gap and margin parameters, and then click the update button.
+if results are not satisfactory, modify the MIN gap and margin parameters, and then click the update button.
 
 (Optional) choose a rendering option by clicking the option button
 
@@ -62,8 +62,8 @@ How can I change output format?
 How can I improve readability?
   Edit config.lua. One can adjust image processing parameters such as sharpen, contrast, gamma, dithering, and color depth.
 
-Output is gray. Why not color?
-  Color pdf is usually larger. If you need colors, then edit config.lua and edit color_depth=8 -> color_depth=24. (From version 0.43)
+Output is gray. 
+  If you need colors, edit config.lua and set color_depth=8 -> color_depth=24. (From version 0.43)
 This program is for converting technical documents.
 
 
