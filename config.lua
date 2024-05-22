@@ -6,6 +6,7 @@
 
 -- kindle send-to-kindle has so many bugs!!! I did some work to work around that.
 kindle2 = {560,735, pad_right=3, pad_bottom=4, mark_corners=true, color_depth=8}  -- color_depth==4 seems to have bugs when resolutions are odd numbers.
+kobo3 = {1224,1836, pad_right=3, pad_bottom=4, mark_corners=true, color_depth=24}  -- color_depth==4 seems to have bugs when resolutions are odd numbers.
 kindle3 = kindle2   -- not sure. previous default was {552,736} 
 kindle_scribe = {
 	--560*3,735*3,  
@@ -93,7 +94,7 @@ end
 
 setDefault()
 
-devices={['kindle 2']=kindle2, ['kindle 3']=kindle3, 
+devices={['kobo libra color']=kobo3, ['kindle 2']=kindle2, ['kindle 3']=kindle3, 
 ['kindle scribe']=kindle_scribe,
 ['cybook (no title bar)']=cybook, ['kobo wireless']=kobo_wireless,
 ['android (width 600)']=android, ['sony PRS-t1']=sony_PRS_T1, ['vector PDF']=vector_PDF}
