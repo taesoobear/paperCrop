@@ -1,9 +1,10 @@
-MIN_gap=1.45
+MIN_gap_x=1.45
+MIN_gap_y=1.45
 margin=1.45
 N_columns=2
 white_point=255
 option="(portrait) vertical scroll "..device.default_split
 crop_T = 5
 crop_B = 5
-crop_L = 6
-crop_R = 0
+crop_L = 6.5
+crop_R = 6.5
