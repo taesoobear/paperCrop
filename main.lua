@@ -50,6 +50,7 @@ function setPresetMenu()
 		presets={'presets/default preset.lua'}
 	else
 		presets=os.glob("presets/*.lua")
+		table.sort(presets)
 	end
 	local function comp(a,b)
 		local fn=processPresetName(a)
@@ -84,6 +85,7 @@ function setOptionMenu()
 		}
 	else
 		options=os.glob("script/*.lua")
+		table.sort(options)
 	end
 	--printTable(options)
 	local function comp(a,b)
@@ -133,17 +135,22 @@ function ctor()
 		
 	-- load devices
 	panel:create("Choice", "devices")
-	local ndevices=0
-	local idevice=0
-	gdevices={}
+	local devicenames={}
 	for k,v in pairs(devices) do 
-		ndevices=ndevices+1 
-		gdevices[ndevices]={k,v}
-		if device==v then 
-			idevice=ndevices 
-		end 
+		table.insert(devicenames, k)
 	end
-	panel:widget(0):menuSize(ndevices+1)
+	table.sort(devicenames)
+
+	gdevices={}
+	local idevice=0
+	for i,k in pairs(devicenames) do 
+		gdevices[i]={k,devices[k]}
+		if devices[k]==device then
+			idevice=i
+		end
+	end
+
+	panel:widget(0):menuSize(#gdevices+1)
 	panel:widget(0):menuItem(0, 'choose a device')
 	for i,v in ipairs(gdevices) do
 		panel:widget(0):menuItem(i, v[1])
