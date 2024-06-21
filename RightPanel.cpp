@@ -70,6 +70,15 @@ lua_State* getState() {
 static void _initLuaEnvironment(RightPanel* win)
 {
 
+	if(L) lua_close(L);
+	L=lua_open();
+	luaopen_base(L);
+	luaL_openlibs(L);
+	Register_baselib(L);
+	Register_mainlib(L);
+	lunaStack ls(L);
+	ls.set<PDFwin>("win", (win->mPDFwin));
+	ls.set<FlLayout>("panel", win);
 	
 
 	
