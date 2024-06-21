@@ -52,7 +52,8 @@ device={600,800} -- {device_width, device_height}
 --uncomment if your device is listed below
 --device=kindle2
 --device=kindle3
-device=kindle_scribe
+--device=kindle_scribe
+device=kobo2 -- kobo libra color (portrait)
 --device=kobo_wireless_old_firmware
 --device=kobo_wireless
 --device=cybook

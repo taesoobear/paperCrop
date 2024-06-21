@@ -431,6 +431,7 @@ function sortRect(mat)
 
 	if mat:rows()==0 then return end
 
+
 	local res={mat(0,4), mat(0,5)}
 	local tbl={}
 	for i=0, mat:rows()-1 do
@@ -460,33 +461,51 @@ function sortRect(mat)
 	local function isSimilar(a,b)
 		return math.abs(a-b)<0.02
 	end
+	local function isSimilarY(a,b)
+		return math.abs(a-b)<MIN_gap_y*(2.0/100.0)   --0.02
+	end
+	local function overlapX(a,b)
+		return b.left>a.left and b.right>a.right
+	end
 
 	local ni=#tbl
 	local i=1
 	while i<ni-1 do
 		local a=tbl[i]
-		local b=tbl[i+1]
-		if isSimilar(a.top, b.top) and isSimilar(a.bottom, b.bottom) then
+		for j=i+1, ni do
+			local b=tbl[j]
+			if isSimilarY(a.top, b.top) and isSimilarY(a.bottom, b.bottom) and b.left>a.left then
 
-			local merge=false
-			if b.left>a.left and b.right>a.right then
-				if b.right-a.left <maxWidth*0.5 then
-					merge=true
-				elseif a.bottom-a.top<0.2 then
-					merge=true
+				local merge=false
+				if overlapX(a,b) then
+					--print('overlap' , i,j)
+					if b.right-a.left <maxWidth*0.5+MIN_gap_x/100 then
+						--print('case1', maxWidth*0.5, MIN_gap_x)
+						merge=true
+					elseif b.right-b.left<MIN_gap_x*2/100 then
+						--print('case2')
+						-- thinX
+						merge=true
+					elseif a.bottom-a.top<0.2 then
+						--print('case3')
+						-- thinY
+						merge=true
+					end
+					print(i, a.bottom, a.top, merge)
 				end
-				print(i, a.bottom, a.top, merge)
-			end
-			if merge then
-				-- merge 
-				a.top=math.min(a.top, b.top)
-				a.bottom=math.max(a.bottom, b.bottom)
-				a.right=b.right
+				if merge then
+					--print('merge', i,j)
+					-- merge 
+					a.top=math.min(a.top, b.top)
+					a.bottom=math.max(a.bottom, b.bottom)
+					a.right=b.right
 
 
-				table.remove(tbl, i+1)
-				ni=#tbl
-				i=i-1
+					table.remove(tbl, j)
+					ni=#tbl
+					i=i-1
+					break
+				end
 			end
 		end
 		i=i+1

@@ -23,22 +23,12 @@
 #include "RightPanel.h"
 #include "PDFwin.h"
 #include "utility/operatorString.h"
-#ifdef USE_LUABIND
-#include "WrapperLua/BaselibLUA.h"
-#include "WrapperLua/MainlibLUA.h"
-#include <luabind/luabind.hpp>
-#include <luabind/function.hpp>
-//#include <luabind/policy.hpp>
-#include <luabind/operator.hpp>
-using namespace luabind;
-#else 
 #include "WrapperLua/LUAwrapper.h"
 #include "WrapperLua/OR_LUA_Stack.h"
 #include "luna_baselib.h"
 #include "luna_mainlib.h"
 void Register_mainlib(lua_State* L);
 void Register_baselib(lua_State* L);
-#endif
 #include "PDFWriter.h"
 #include "utility/FltkAddon.h"
 #include <iostream>
@@ -73,95 +63,18 @@ static int add_file_and_line(lua_State* L)
 }
 bool CreateDirectory(const char *PathToCreate);
 bool DeleteAllFiles(const char* path, const char* mask,bool bConfirm);
-#ifdef USE_LUABIND
-static LUAwrapper* L=NULL;
-#else
 static lua_State* L=NULL;
-#endif
 lua_State* getState() {
 	return L;
 }
 static void _initLuaEnvironment(RightPanel* win)
 {
 
-#ifdef USE_LUABIND
-	delete(L);
-	L=new LUAwrapper();
-	luabind::set_pcall_callback(&add_file_and_line);
-	addMainlibModule(L->L);
-	// export member functions of PDFwin for use in LUA script.
-	// to understand the following codes, please refer to "luabind" manual.
-	module(L->L)[
-		def("reflow", &reflow),
-		def("trimVertSpaces", &trimVertSpaces),			
-		def("CreateDirectory", (bool (*)(const char*))&CreateDirectory),
-		def("DeleteAllFiles", &DeleteAllFiles),
-		class_<PDFwin>("PDFwin")
-			.def_readonly("filename", &PDFwin::_filename)
-			.def_readonly("currPage", &PDFwin::mCurrPage)
-			.def("getRectImage_width", &PDFwin::getRectImage_width)
-			.def("load", &PDFwin::load)
-			.def("getDPI_width", &PDFwin::getDPI_width)
-			.def("getDPI_height", &PDFwin::getDPI_height)
-			.def("getRectImage_height", &PDFwin::getRectImage_height)
-			.def("setStatus", &PDFwin::setStatus)
-			.def("getNumPages", &PDFwin::getNumPages)
-			.def("getNumRects", &PDFwin::getNumRects)
-			.def("setCurPage", &PDFwin::setCurPage)
-			.def("pageChanged", &PDFwin::pageChanged)
-			.def("redraw", &PDFwin::redraw)
-			.def("deleteAllFiles", &PDFwin::deleteAllFiles)
-			.def("deleteAllFilesWithoutConfirm", &PDFwin::deleteAllFilesWithoutConfirm),
-		class_<PDFWriter>("PDFWriter")
-			.def(constructor<>())
-			.def("init", &PDFWriter::init)
-			.def("addPage", &PDFWriter::addPage)
-			.def("addPageColor", &PDFWriter::addPageColor)
-			.def("save", &PDFWriter::save)
-			.def("isValid",&PDFWriter::isValid)
-			];
-
-
-	L->setRef<PDFwin>("win", *(win->mPDFwin));
-	L->setRef<FlLayout>("panel", *win);
-#else
-	if(L) lua_close(L);
-	L=lua_open();
-	luaopen_base(L);
-	luaL_openlibs(L);
-	Register_baselib(L);
-	Register_mainlib(L);
-	lunaStack ls(L);
-	ls.set<PDFwin>("win", (win->mPDFwin));
-	ls.set<FlLayout>("panel", win);
-#endif
 	
 
 	
 }
 
-#ifdef USE_LUABIND
-#define CATCH_LUABIND_ERROR(x, y) catch(luabind::error& e)\
-	{\
-		std::cout <<"lua error"<<x<<","<<e.what()<<"\n";\
-		int n=lua_gettop(e.state());\
-		Msg::msgBox("lua error %s", lua_tostring(e.state(), n));\
-		ASSERT(0);\
-		luaL_dostring(L->L, "dbg.traceBack()");\
-		luaL_dostring(L->L, "dbg.console()");\
-		_releaseScript(L, y);\
-		L=NULL;\
-    }
-static void _releaseScript(LUAwrapper* L, FlLayout& l)
-{
-	if(L)
-	{
-		luabind::call_function<void>(L->L, "dtor");
-		delete L;
-	}
-}
-
-#else
 static void _releaseScript(lua_State* L, FlLayout& l)
 {
 	if(L)
@@ -180,32 +93,10 @@ static void handleLUAerror(lua_State* L)
 	luaL_dostring(L, "dbg.traceBack()");
 	luaL_dostring(L, "dbg.console()");
 }
-#endif
 extern TString g_arg;
 static void _loadScript(RightPanel* win, const char* script)
 {
 	_initLuaEnvironment(win);
-#ifdef USE_LUABIND
-	if(L)
-	{
-		try
-		{
-			if (g_arg.length()>0)
-				L->dostring(g_arg.ptr());
-			L->dofile(script);
-		}
-		CATCH_LUABIND_ERROR("_loadScript", *win)
-	}
-
-	if (L)
-	{
-		try
-		{
-			luabind::call_function<void>(L->L, "ctor");
-		}
-		CATCH_LUABIND_ERROR("ctor", *win)
-	}
-#else
 	if(L)
 	{
 		if (g_arg.length()>0)
@@ -218,7 +109,6 @@ static void _loadScript(RightPanel* win, const char* script)
 		l.getglobal("ctor");
 		l.call(0,0);
 	}
-#endif
 }
 
 RightPanel::RightPanel(int x, int y, int w, int h, PDFwin* pdfwin)
@@ -241,17 +131,6 @@ RightPanel::~RightPanel(void)
 #endif
 void RightPanel::onCallback(FlLayout::Widget const& w, Fl_Widget * pWidget, int userData)
 {
-#ifdef USE_LUABIND
-	try
-	{
-		if(L)
-		{
-			bool res=luabind::call_function<bool>(L->L, "onCallback", w, userData);
-			if (res) return;
-		}
-	}
-	CATCH_LUABIND_ERROR("onCallBack", *this)
-#else
 		if(L)
 		{
 			lunaStack l(L);
@@ -263,7 +142,6 @@ void RightPanel::onCallback(FlLayout::Widget const& w, Fl_Widget * pWidget, int 
 			l>>res;
 			if(res) return;
 		}
-#endif
 	if(w.mId=="update")
 	{
 		mPDFwin->pageChanged();

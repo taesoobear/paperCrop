@@ -325,6 +325,7 @@ TRect merge(TRect const & prevRect, TRect const & rect)
 	return mergeRect;
 }
 
+// initial merge. there are a second-path in main.lua:sortRect
 bool mergeable(std::vector<TRect> & results, int i, int j, int max_width, int min_gap_x, int min_gap_y)
 {
 	TRect& prevRect=results[i];

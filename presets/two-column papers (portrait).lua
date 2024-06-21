@@ -1,4 +1,4 @@
-MIN_gap_x=1.45
+MIN_gap_x=1.25 -- >1.35 sometimes is too wide a gap to detect
 MIN_gap_y=1.45
 margin=1.45
 N_columns=2
