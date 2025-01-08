@@ -2,7 +2,8 @@
 cmake_minimum_required(VERSION 3.1)
 
 set (CMAKE_VERBOSE_MAKEFILE  ON)
-set(CMAKE_CXX_STANDARD 17) 
+#set(CMAKE_CXX_STANDARD 17) 
+set(CMAKE_CXX_STANDARD 20)
 project (paperCrop)
 
 set(LUNA_GEN ${paperCrop_SOURCE_DIR}/luna_gen.lua)
@@ -312,9 +313,15 @@ endif()
 
 if(APPLE)
 
+		set(FLTK_LIBS
+			fltk_images
+			fltk
+			fltk_gl
+			)
   target_link_libraries(paperCrop
 	${Fontconfig_LIBRARIES}
-	${FLTK_LIBRARIES}
+	#${FLTK_LIBRARIES}
+	${FLTK_LIBS}
 	#${DevIL_LIBRARIES}
 	# fltk_images
 	# fltk
