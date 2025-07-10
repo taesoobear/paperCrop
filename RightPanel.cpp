@@ -148,7 +148,7 @@ void RightPanel::onCallback(FlLayout::Widget const& w, Fl_Widget * pWidget, int 
 			l<<userData;
 			l.call(2,1);
 			bool res;
-			l>>res;
+			l.checkBool(res);
 			if(res) return;
 		}
 	if(w.mId=="update")

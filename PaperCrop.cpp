@@ -45,8 +45,10 @@ void MainWin::onIdle()
 	mPDFwin->onIdle();
 }
 
+#ifndef NO_DEVIL
 #include <IL/il.h>
 #include <IL/ilu.h>
+#endif
 
 TString g_arg;
 #ifdef _MSC_VER

@@ -28,7 +28,7 @@
 #include "utility/FltkAddon.h"
 
 // poppler headers
-#include "PDFDoc.h"
+#include <PDFDoc.h>
 #include "GlobalParams.h"
 // #include "GooMutex.h"
 #include <goo/GooString.h>
@@ -102,7 +102,7 @@ public:
 		for (int i=0; i<_textCache.size(); i++)	delete _textCache[i];
 		_textCache.resize(0);
 
-#ifdef __APPLE__
+#if defined( __APPLE__) || defined(_MSC_VER)
 		_pdfDoc= new PDFDoc(std::unique_ptr<GooString>(new GooString(fileName)));
 #else
 		_pdfDoc= new PDFDoc(new GooString(fileName));

@@ -112,6 +112,8 @@ public:
 	intvectorn& operator=(const intvectorn& other);//		{ assign(other);return *this;}
 	intvectorn& operator=(const intvectornView& other)		{ assign(other);return *this;}
 
+	// for directly passing to a parameter. 
+	intvectorn& lval() const { return (intvectorn&)(*this);}  //!< ex> doSomeModification(a.range(1,3).lval());
 };
 
 namespace v0
@@ -371,7 +373,11 @@ public:
 	vectorn& operator=( vector3 const& other)		{ return assign(other);};
 	vectorn& operator=( quater const& other)		{ return assign(other);};
 
+	/* doesn't work in some gnu compilers.
     inline operator vectorn& () const { return (vectorn&)(*this);}
+	*/
+	// for directly passing to a parameter. 
+	vectorn& lval() const { return (vectorn&)(*this);}  //!< ex> doSomeModification(a.range(1,3).lval());
 };
 
 

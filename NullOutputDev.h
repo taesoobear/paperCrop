@@ -53,7 +53,7 @@ public:
 	
 	  GfxFont *gfxFont;
 	  GfxFontType fontType;
-#ifdef __APPLE__
+#if defined( __APPLE__) || defined(_MSC_VER)
 	  if (!(gfxFont = state->getFont().get())) {
 #else
 	  if (!(gfxFont = state->getFont())) {

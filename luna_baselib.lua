@@ -114,7 +114,7 @@ bindTarget={
 				void setAllValue(int v);
 				]]
 			},
-			custumFunctionsToRegister ={'setValues'},
+			customFunctionsToRegister ={'setValues'},
 		},
 		{
 			name='TRect',
@@ -512,7 +512,7 @@ bindTarget={
 				
 				]]
 			},
-			custumFunctionsToRegister ={'setValues'},
+			customFunctionsToRegister ={'setValues'},
 
 		},
 		{
@@ -627,7 +627,7 @@ static matrix4 inverse(matrix4 const& m)
 				'()',
 				'(int rows, int cols)',
 			},
-			custumFunctionsToRegister ={'setValues'},
+			customFunctionsToRegister ={'setValues'},
 			wrapperCode=
 			[[
 			static int setValues(lua_State* L)
@@ -823,7 +823,7 @@ static matrix4 inverse(matrix4 const& m)
 				{
 					return a%b;
 				}
-				// you can implement custum interface function too. (see custumFunctionsToRegister below)
+				// you can implement custom interface function too. (see customFunctionsToRegister below)
 					static int __tostring(lua_State* L)
 					{
 						vector3& self=*luna_t::check(L,1);
@@ -853,7 +853,7 @@ static matrix4 inverse(matrix4 const& m)
 							vector3 __unm(vector3 const& a,vector3 const & a2)
 						]]
 					},
-					custumFunctionsToRegister={'__tostring'},
+					customFunctionsToRegister={'__tostring'},
 					memberFunctions = -- list of strings of c++ function declarations.
 					{
 						-- you can enter multiline texts that looks like a cleaned header file
@@ -1005,7 +1005,7 @@ static matrix4 inverse(matrix4 const& m)
 
 			}
 					]],
-					custumFunctionsToRegister ={'frexp'},
+					customFunctionsToRegister ={'frexp'},
 					functions=
 					{
 						[[

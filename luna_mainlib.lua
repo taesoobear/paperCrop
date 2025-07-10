@@ -76,7 +76,7 @@ bindTargetMainLib={
 				return self->work(w,s);
 			}
 			]],
-			custumFunctionsToRegister={'__call'},
+			customFunctionsToRegister={'__call'},
 		},
 		{
 			name='GlobalUI',

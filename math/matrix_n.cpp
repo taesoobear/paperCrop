@@ -170,21 +170,21 @@ matrixn& matrixn::each1(void (*s1_func)(m_real&,m_real), matrixn const& a)
 matrixn& matrixn::each0(const v0::_op& op)
 {
 	for(int i=0; i<rows(); i++)
-		op.calc(row(i));
+		op.calc(row(i).lval());
 	return *this;
 }
 
 matrixn& matrixn::each1(const v1::_op& op, vectorn const& a)
 {
 	for(int i=0; i<rows(); i++)
-		op.calc(row(i), a);
+		op.calc(row(i).lval(), a);
 	return *this;
 }
 
 matrixn& matrixn::each1(const v1::_op& op, matrixn const& a)
 {
 	for(int i=0; i<rows(); i++)
-		op.calc(row(i), a.row(i));
+		op.calc(row(i).lval(), a.row(i));
 	return *this;
 }
 #endif

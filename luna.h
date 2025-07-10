@@ -20,7 +20,13 @@ struct luna_eqstr{
 	}
 };
 
+std::string lunaType(lua_State*L, int i);
 typedef int (*luna_mfp)(lua_State *L);
+#if (defined(_MSC_VER)&& _MSC_VER<1700) || (!defined(_MSC_VER) &&__cplusplus < 201103L)
+#define OLD_COMPILERS
+#endif
+
+#ifdef OLD_COMPILERS
 #ifdef NO_HASH_MAP
 #include <map>
 struct luna_ltsz: std::binary_function<char* const &, char* const &, bool>
@@ -59,13 +65,35 @@ typedef stdext::hash_map<const char*, luna_mfp, luna_stringhasher> luna__hashmap
 #include <ext/hash_map> 
 typedef __gnu_cxx::hash<const char*> luna_hash_t;
 typedef __gnu_cxx::hash_map<const char*, luna_mfp, luna_hash_t, luna_eqstr> luna__hashmap;
-#else
-#include <unordered_map>
-typedef std::hash<const char*> luna_hash_t;
-typedef std::unordered_map<const char*, luna_mfp, luna_hash_t, luna_eqstr> luna__hashmap;
 #endif
 #endif // UNIX
-#endif // not defined NO_HASH_MAP
+#endif // not NO_HASH_MAP
+#else // not OLD_COMPILERS
+
+#include <unordered_map>
+#ifdef _MSC_VER
+class luna_hash_t 
+{
+public:
+  size_t operator() (const char* in) const
+  {
+    size_t h = 0;
+	const char* p;
+    for(p = in; *p != 0; ++p)
+		h = 31 * h + (*p);
+    return h;
+  }
+  
+  bool operator() (const char* s1, const char* s2) const
+  {
+    return strcmp(s1, s2)<0;
+  }
+};
+#else
+typedef std::hash<const char*> luna_hash_t;
+#endif
+typedef std::unordered_map<std::string, luna_mfp> luna__hashmap;
+#endif
 
 typedef struct { const char *name; luna_mfp mfunc; } luna_RegType;
 
@@ -122,6 +150,7 @@ class impl_LunaTraits
  public:
 };
 
+typedef struct {int uniqueID; void *pT; bool gc; bool has_env;} luna_userdataType;
 
 template <typename T> class Luna {
 	typedef LunaTraits<T > T_interface;
@@ -157,7 +186,8 @@ template <typename T> class Luna {
 		// scripts can add functions written in Lua.
 		lua_pushstring(L, T_interface::className);
 		lua_pushvalue(L, methods);
-		lua_settable(L, -3); // __luna[className]=methods
+		lua_settable(L, -3); // __luna[className]=methods  because __luna:-3, className:-2, methods:-1
+
 
 		lua_pushliteral(L, "__index");
 		lua_pushvalue(L, methods);
@@ -225,7 +255,7 @@ template <typename T> class Luna {
 	}
 
 
-	// use lunaStack::push if possible. 
+	// use lunaStack::push or luna_push<T>(L,obj, gc) if possible. 
 	inline static void push(lua_State *L, const T* obj, bool gc, const char* metatable=T_interface::className)
 	{
 #if defined(METHOD_TABLE_IS_METATABLE) 
@@ -303,59 +333,113 @@ class lunaStack
 	lua_State* L;
 	int currArg;
 	int delta;
- lunaStack(lua_State* l, bool upward=true):L(l){
+	lunaStack():L(NULL){} // setCheck is necessary before use.
+	lunaStack(lua_State* l, bool upward=true):L(l){
 		if (upward){
-			// useful for retrieving function argument. Retreieving doesn't remove elements from stack
+			// useful for retrieving function argument. Retreieving (operator>>) doesn't remove elements from stack
 			setCheckFromBottom();
 		} else {
-			// useful for retrieving function call results. Retrieving pops elements from stack
+			// Retrieving (operator>>) pops elements from stack
 			setCheckFromTop();
 		}
 	}
 	~lunaStack();
-	inline void setCheckFromTop() { delta=-1; currArg=gettop();}
+	inline void setCheckFromTop() { delta=0; currArg=-1;}// gettop();}
 	inline void setPop() { setCheckFromTop();}
 	inline void setCheckFromBottom() { delta=1; currArg=1;}
 	
+	inline void printStack(bool compact=true)
+	{
+		luna_printStack(L,compact);
+	}
 	// check
 	inline int gettop() { return lua_gettop(L);}
 	inline double tonumber(int i) { return luaL_checknumber(L, i);}
 	inline const char* tostring(int i) { return luaL_checkstring(L, i);}
 	inline bool toboolean(int i) { return lua_toboolean(L, i)==1;}
 	template <class T> T* topointer(int i) { return (T*)Luna<typename LunaTraits<T>::base_t>::check(L,i);}  
+	template <class T> inline static T* topointer( lua_State* L, int i) { return (T*)Luna<typename LunaTraits<T>::base_t>::check(L,i);}  
 
 	inline void _incr(){
 		currArg+=delta;
-		if (delta==-1) lua_pop(L,1);
+		if (delta==0) lua_pop(L,1);
 	}
 
+	// for variable number of arguments:
+	// while(l.currArg<=l.numArg())  l>>res;
+	// or without changing currArg:
+	// for (int i=l.currArg; i<=l.numArg(); i++)
+	// 		printf("%d ", l.luaType(i));
+	inline int numArg() { return gettop();}
+
+	// check type before pop. LUA_NUMBER, LUA_STRING
+	int luaType() { return lua_type(L, currArg); }
+	int luaType(int i) { return lua_type(L, i); }
+	// "number", "string", .. or luna types such as "vector3",...
+	std::string lunaType() { return ::lunaType(L, currArg);}
+	std::string lunaType(int i) { return ::lunaType(L, i);}
 	// retrieve (or pop)
 	friend lunaStack& operator>>( lunaStack& os, double& a)      
 	{ a=os.tonumber(os.currArg); os._incr(); return os;}
 	friend lunaStack& operator>>( lunaStack& os, std::string& a) 
 	{ a=os.tostring(os.currArg); os._incr(); return os;}
-	friend lunaStack& operator>>( lunaStack& os, bool& a)        
-	{ a=os.toboolean(os.currArg); os._incr(); return os;}
+	void checkBool( bool& a)        
+	{ 
+		lunaStack& os=*this;
+		a=os.toboolean(os.currArg); os._incr(); 
+	}
+	friend lunaStack& operator>>( lunaStack& os, int& a)        
+	{ a=(int)os.tonumber(os.currArg); os._incr(); return os;}
 	// check and pop 
 	template <class T> T* check() { 
 		T* a=topointer<T>(currArg);_incr(); return a;}
+	// check only (no pop) 
+	template <class T> T* checkOnly() { 
+		T* a=topointer<T>(currArg); return a;}
 
 	inline void pop() { lua_pop(L,1);}
 
 	friend lunaStack& operator<<( lunaStack& os, double a)		    	{ lua_pushnumber(os.L, a); return os;}
+	friend lunaStack& pushBool( lunaStack& os, bool a)		    	{ lua_pushboolean(os.L, a); return os;}
 	friend lunaStack& operator<<( lunaStack& os, std::string const &a)	{ lua_pushstring(os.L,a.c_str()); return os;}
 
 	// set garbageCollection=true when lua environment needs to adopt the object. 
 	// e.g. push<OBJ>(new OBJ(), true);
 	//      push<OBJ>(pointerToExistingOBJmanagedInsideCpp, false);
 	template <class T> void push(T const* c,bool garbageCollection=false) { Luna<typename LunaTraits<T>::base_t>::push(L,(typename LunaTraits<T>::base_t*)c,garbageCollection, LunaTraits<T>::className);}
-	template <class T> void push(T const& c) { Luna<typename LunaTraits<T>::base_t>::push(L,(typename LunaTraits<T>::base_t*)c,false, LunaTraits<T>::className);}
+	template <class T> void push(T const& c) { Luna<typename LunaTraits<T>::base_t>::push(L,(typename LunaTraits<T>::base_t*)&c,false, LunaTraits<T>::className);}
 
+	// stack[top]=stack[tblindex][index]
+	inline void gettable(int tblindex, int index)
+	{
+		lua_pushnumber(L, index);
+		lua_gettable(L, tblindex);
+	}
+	// stack[top]=stack[tblindex][key]
+	inline void gettable(int tblindex, const char* key)
+	{
+		lua_pushstring(L, key);
+		lua_gettable(L, tblindex);
+	}
 	// stack[top]=_G[key]
-	void getglobal(const char* key){
+	inline void getglobal(const char* key){
 		lua_pushstring(L, key);
 		lua_gettable(L,LUA_GLOBALSINDEX); // stack top becomes _G[key] 
 	}
+
+	inline void getglobal(const std::string & key)
+	{
+		getglobal(key.c_str());
+	}
+
+	// For example, 
+	// to access a vector3 object "mRetarget.testSkel[2].vec3" without affecting stack,
+	// l.getglobal('mRetarget','testSkel');
+	// l.replaceTop(2);
+	// l.replaceTop('vec3');
+	// result=l.topointer<vector3>(-1);
+	// l.pop();
+	// 
 
 	// stack[top]=_G[key1][key2]
 	inline void getglobal(const char* key1, const char* key2){
@@ -368,34 +452,82 @@ class lunaStack
 		replaceTop(key2);
 		replaceTop(key3);
 	}
+
 	inline void getglobal(const char* key1, const char* key2, const char* key3, const char* key4){
 		getglobal(key1);
 		replaceTop(key2);
 		replaceTop(key3);
 		replaceTop(key4);
 	}
+	
+	inline void popSecondLast()
+	{
+		lua_insert(L, -2);  // swap table and value 
+		lua_pop(L,1); // pop-out prev table
+	}
 
 	// stack[top]=stack[top][key]
 	inline void replaceTop(const char* key){
-		if (!lua_istable(L,-1)) luaL_error(L, "Luna<>::replaceTop: non-table object cannot be accessed");
+		if (!lua_istable(L,-1)) luaL_error(L, "Luna<>::replaceTop: %s: non-table object cannot be accessed", key);
 		lua_pushstring(L, key);
 		lua_gettable(L, -2);
-		lua_insert(L, -2);  // swap table and value 
-		lua_pop(L,1); // pop-out prev table
+		popSecondLast();
+	}
+	// stack[top]=stack[top][index]
+	inline void replaceTop(int index){
+		if (!lua_istable(L,-1)) luaL_error(L, "Luna<>::replaceTop: non-table object cannot be accessed");
+		lua_pushnumber(L, index);
+		lua_gettable(L, -2);
+		popSecondLast();
 	}
 	inline void replaceTopLUD(void* key){
 		if (!lua_istable(L,-1)) luaL_error(L, "Luna<>::replaceTop: non-table object cannot be accessed");
 		lua_pushlightuserdata(L, key);
 		lua_gettable(L, -2);
-		lua_insert(L, -2);  // swap table and value 
-		lua_pop(L,1); // pop-out prev table
+		popSecondLast();
 	}
 
+	// what this does is 
+	// local a={}
+	// stack[top][key]=a   followed by a replaceTop operation:
+	// stack[top]=a
+	inline void replaceTop_newTable(const char* key)
+	{
+		lua_pushstring(L,key);
+		lua_newtable(L);
+		//luna_printStack(L);
+		lua_settable(L,-3);
+		//printf("asdf "); luna_printStack(L);
+		lua_pushstring(L,key);
+		lua_gettable(L,-2);
+		popSecondLast();
+		//luna_printStack(L);
+	}
+	// function call example 1 : 
+	// 		lua: 	ret1, ret2=functionName(param1, param2, param3)
+	// 		cpp:
+	// l.getglobal("functionName")
+	// l << param1 << param2 << param3;
+	// l.call(3, 2);
+	// l >> ret2 >> ret1;
+	
 	// assuming stack[-1-numIn]==function. (stack: function -> arg1 -> arg2 -> arg_numIn )
 	inline void call(int numIn, int numOut){
 		lua_call(L, numIn, numOut);
-		setCheckFromTop(); // prepare to read-out results 
+		// prepare to read-out results in reverse order
+		setCheckFromTop();  // this is not the default mode, but it is okay to leave it that way.
 	}
+
+	// function call example 2 (which is identical to the example 1):
+	// l.getglobal("functionName")
+	// l << param1 << param2 << param3;
+	// int numOut=l.beginCall(3);
+	// l >> ret1 >> ret2; // note the order here.
+	// l.endCall(numOut); // cleans the stack
+	
+	int beginCall(int numIn);
+	int beginPcall(int numIn, int errorFunc);
+	void endCall(int numOut);
 
 	template <class T> T* get(const char* key, int table_index=LUA_GLOBALSINDEX){
 		//luna_printStack(L);
@@ -418,6 +550,11 @@ class lunaStack
 		lua_settable(L, table_index);
 	}
 
+	// linear search. returns #tbl
+	int arraySize(int tblindex);
+	// a={{"a","b"}, "c"} -> treeSize of (a)=5 : ( Root, LeftInternalNode, "a", "b", "c")
+	//									   where Root=a, LeftInternalNode={"a","b"}
+	int treeSize(int tblindex);
 };
 
 class luna_wrap_object // inherit this object to enable inheritance from lua
@@ -451,10 +588,31 @@ class luna_wrap_object // inherit this object to enable inheritance from lua
 		}
 		lua_pushstring(L, "aUserdata");
 		lua_gettable(L,-3);
-		l.replaceTopLUD((void*)(static_cast<typename LunaTraits<T>::base_t*>(this)));
+		l.replaceTopLUD((void*)(static_cast<typename LunaTraits<T>::base_t*>((T*)this)));
 		lua_remove(L,-3); // pop-out metatable
 		return true;	
 	}
+};
+
+class luna_derived_object // inherit this object to derive a lua class in cpp. See test_inheritance_from_lua.lua.
+{
+ protected:
+	int _uniqueID;
+	lunaStack _l; 
+ public:
+	luna_derived_object(lua_State* l):_l(l){}
+	luna_derived_object(lua_State* l, int uniqueID):_l(l), _uniqueID(uniqueID){}
+	luna_derived_object(){_l=NULL;}
+	virtual ~luna_derived_object();
+	void call_ctor(int numArg); 
+	// push a member function and the self object.
+	void pushMemberAndSelf(const char* funcName);
+
+	// push only a member function
+	void pushMemberOnly(const char* funcName);
+	inline void pushSelf() { push(*this);}
+	void push(luna_derived_object const& o);
+	int _storeNewObject(); // returns a unique ID.
 };
 template <class T>
 int Luna<T>::new_modified_T(lua_State *L) {
@@ -464,25 +622,18 @@ int Luna<T>::new_modified_T(lua_State *L) {
 		lua_remove(L, 1);  
 		T *obj = T_interface::_bind_ctor(L);  // call constructor for T objects
 		obj->setCustumMT(L, metatable.c_str());
-		push(L,obj,true, metatable.c_str());
-		//luna_printStack(L);
+		//push(L,obj,true, metatable.c_str());
+		Luna<typename LunaTraits<T>::base_t>::push(L,(typename LunaTraits<T>::base_t*)obj,true, metatable.c_str());
 		lunaStack l(L);
+
+		//luna_printStack(L);
 		l.getglobal("__luna", metatable.c_str(), "aUserdata");
 		if(lua_isnil(L,-1))
 		{
 			lua_pop(L,1);
 			l.getglobal("__luna", metatable.c_str());
 			//printf("getglobal"); luna_printStack(L);
-			lua_pushstring(L,"aUserdata");
-			lua_newtable(L);
-			//luna_printStack(L);
-			lua_settable(L,-3);
-			//printf("asdf "); luna_printStack(L);
-			lua_pushstring(L,"aUserdata");
-			lua_gettable(L,-2);
-			lua_insert(L,-2); // swap __luna and aUserdata
-			lua_pop(L,1);
-			//luna_printStack(L);
+			l.replaceTop_newTable("aUserdata");
 		}
 
 		//printf("kk ");luna_printStack(L);
@@ -495,4 +646,14 @@ int Luna<T>::new_modified_T(lua_State *L) {
 		//luna_printStack(L);
 		return 1;  // userdata containing pointer to T object
 	}
+class lunaState
+{
+	lua_State* L;
+	public:
+	lunaState(lua_State* l):L(l){}
+	lua_State*  ptr() const {return L;}
+	inline operator lua_State*() const {return L;}
+	void print() const {}
+};
+template <class T> void luna_push(lua_State *L, T const* c,bool garbageCollection=false) { Luna<typename LunaTraits<T>::base_t>::push(L,(typename LunaTraits<T>::base_t*)c,garbageCollection, LunaTraits<T>::className);}
 #endif
