@@ -19,6 +19,8 @@
 // USA.
 //
 
+// poppler headers
+#include <PDFDoc.h>
 #include "stdafx.h"
 #include "PDFwin.h"
 
@@ -27,8 +29,6 @@
 #include "utility/FlLayout.h"
 #include "utility/FltkAddon.h"
 
-// poppler headers
-#include <PDFDoc.h>
 #include "GlobalParams.h"
 // #include "GooMutex.h"
 #include <goo/GooString.h>
@@ -102,7 +102,7 @@ public:
 		for (int i=0; i<_textCache.size(); i++)	delete _textCache[i];
 		_textCache.resize(0);
 
-#if defined( __APPLE__) || defined(_MSC_VER)
+#ifndef OLD_LINUX
 		_pdfDoc= new PDFDoc(std::unique_ptr<GooString>(new GooString(fileName)));
 #else
 		_pdfDoc= new PDFDoc(new GooString(fileName));

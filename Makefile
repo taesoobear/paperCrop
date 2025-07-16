@@ -31,8 +31,8 @@ install_dependencies_mac:
 	brew install devil fltk eigen lua@5.1 poppler
 	pip3 install wxPython
 
-install_dependencies_ubuntu:
-	sudo apt-get install libpoppler-dev libpoppler-private-dev libdevil-dev libfontconfig-dev libfltk1.1-dev libdevil-dev libfreeimage-dev liblua5.1-dev libpng-dev lua5.1 cmake g++ libxml2-dev libgsl0-dev openjdk-8-jre python3-wxgtk4.0
+install_dependencies_ubuntu24:
+	sudo apt-get install libpoppler-dev libpoppler-private-dev libfontconfig-dev libfltk1.3-dev libdevil-dev libfreeimage-dev liblua5.1-dev libpng-dev lua5.1 cmake g++ libxml2-dev libgsl0-dev openjdk-8-jre python3-wxgtk4.0
 
 install_dependencies_ubuntu11.10:
 	sudo apt-get install libpoppler-dev libdevil-dev libfontconfig-dev libfltk1.1-dev libdevil-dev libfreeimage-dev liblua5.1-dev libpng12-dev lua5.1 cmake g++ libxml2-dev libgsl0-dev openjdk-7-jre
