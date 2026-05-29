@@ -120,7 +120,7 @@ public:
 		white[2]=0xff;
 
 		// _outputDev = new SplashOutputDev_mod(splashModeRGB8, 4, gFalse, white, bitmapTopDown);
-		_outputDev = new SplashOutputDev(splashModeRGB8, 4, false, white, bitmapTopDown);
+		_outputDev = new SplashOutputDev(splashModeRGB8, 4, white, bitmapTopDown);
 		if(!_outputDev)
 		{
 			printf("error loading pdf");

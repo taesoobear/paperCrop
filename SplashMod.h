@@ -14,11 +14,11 @@ class SplashOutputDev_mod: public SplashOutputDev {
   SplashOutputDev_mod(SplashColorMode colorModeA, int bitmapRowPadA,
 		  bool reverseVideoA, SplashColorPtr paperColorA,
 		  bool bitmapTopDownA = true)
-	  :SplashOutputDev(colorModeA, bitmapRowPadA, reverseVideoA, paperColorA,
+	  :SplashOutputDev(colorModeA, bitmapRowPadA, paperColorA,
 					   bitmapTopDownA){}
 
 // Transform a point from user space to device space.
-inline void transform(SplashCoord *matrix,
+inline void transform(const SplashCoord *matrix,
 			      SplashCoord xi, SplashCoord yi,
 			      SplashCoord *xo, SplashCoord *yo) {
   //                          [ m[0] m[1] 0 ]
@@ -27,7 +27,7 @@ inline void transform(SplashCoord *matrix,
   *xo = xi * matrix[0] + yi * matrix[2] + matrix[4];
   *yo = xi * matrix[1] + yi * matrix[3] + matrix[5];
 }
- void fillChar(SplashCoord*matrix, SplashCoord x, SplashCoord y,
+ void fillChar(const SplashCoord*matrix, SplashCoord x, SplashCoord y,
 			     int c, SplashFont *font) {
   SplashGlyphBitmap glyph;
   SplashCoord xt, yt;
@@ -52,7 +52,7 @@ void drawChar(GfxState *state, double x, double y,
 	if(state->getRender()!=3 && font && !state->getFillColorSpace()->isNonMarking())
 		{
 			
-			fillChar(getSplash()->getMatrix(), (SplashCoord)(x-originX), (SplashCoord)(y-originY), code, font);
+			fillChar(getSplash()->getMatrix().data(), (SplashCoord)(x-originX), (SplashCoord)(y-originY), code, font);
 		}
 }
 };
